@@ -5,6 +5,7 @@ Module to filter server IP's from (Net)Flow
 
 import os
 from os import path
+import sys
 import ipaddress
 from typing import Dict
 import requests
@@ -24,22 +25,22 @@ class FlowFilter:
         for flow in flowlist:
             if flow.ip_source.is_multicast:
                 continue
-            elif flow.ip_dest.is_multicast:
+            if flow.ip_dest.is_multicast:
                 continue
-            elif flow.ip_source == ipaddress.ip_address("255.255.255.255"):
+            if flow.ip_source == ipaddress.ip_address("255.255.255.255"):
                 continue
-            elif flow.ip_dest == ipaddress.ip_address("255.255.255.255"):
+            if flow.ip_dest == ipaddress.ip_address("255.255.255.255"):
                 continue
-            else:
-                match self.NmapPortLogic(flow.port_source, flow.port_dest, flow.proto):
-                    case 1:
-                        self.AddIPToList(flow.ip_source, flow.port_source)
-                    case 0:
-                        ##More magic (if this event will occur, not sure yet, test with more data)
-                        print("We need more magic!")
-                        print(flow)
-                    case -1:
-                        self.AddIPToList(flow.ip_dest, flow.port_dest)
+
+            match self.NmapPortLogic(flow.port_source, flow.port_dest, flow.proto):
+                case 1:
+                    self.AddIPToList(flow.ip_source, flow.port_source)
+                case 0:
+                    ##More magic (if this event will occur, not sure yet, test with more data)
+                    print("We need more magic!")
+                    print(flow)
+                case -1:
+                    self.AddIPToList(flow.ip_dest, flow.port_dest)
         return self.ip_port_dict
 
     def LoadNMAPServices(self) -> None:
@@ -52,27 +53,26 @@ class FlowFilter:
                 url = os.getenv('nmap_web_file_url',
                                 "https://raw.githubusercontent.com/nmap/nmap/master/nmap-services")
                 req = requests.get(url, allow_redirects=True)
-                open(os.getenv('nmap_services_file_location'), 'wb').write(req.content)
+                with open(os.getenv('nmap_services_file_location'), 'wb').write(req.content):
+                    print("File downloading...")
             except IOError as exception:
                 print("Cannot download file: " + str(exception))
-                quit()
+                sys.exit(1)
 
         try:
-            nmap_file = open(os.getenv('nmap_services_file_location'), 'r', encoding="utf-8")
+            with open(os.getenv('nmap_services_file_location'), 'r', encoding="utf-8") as nmap_file:
+                for line in nmap_file:
+                    try:
+                        _, ports, freqs = line.split("#", 1)[0].split(None, 3)
+                        ports, proto = ports.split("/", 1)
+                        port = int(ports)
+                        freq = float(freqs)
+                    except ValueError:
+                        continue
+                    self.ports.setdefault(proto, {})[port] = freq
+                self.ports_dict_filled = True
         except (IOError, AttributeError, AssertionError):
-            print()
-        else:
-            for line in nmap_file:
-                try:
-                    _, port_s, freq_s = line.split("#", 1)[0].split(None, 3)
-                    port_s, proto = port_s.split("/", 1)
-                    port = int(port_s)
-                    freq = float(freq_s)
-                except ValueError:
-                    continue
-                self.ports.setdefault(proto, {})[port] = freq
-            self.ports_dict_filled = True
-            nmap_file.close()
+            print("Something went wrong...")
 
     def NmapPortLogic(self, port1: int, port2: int, proto: str) -> int:
         """

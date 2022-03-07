@@ -5,8 +5,8 @@ Main module for FlowScanner
 #! /usr/bin/env python
 
 import os
-import sys
 from os import path
+import sys
 from dotenv import load_dotenv
 from FlowScanner.Tools.FlowFilter import FlowFilter
 from FlowScanner.Parser.Nfdump import Nfdump
@@ -20,7 +20,7 @@ def main() -> None:
         print("Flow file does not exist: "
                 + str(os.getenv('flow_file_location'))
                 + " - Leaving...!")
-        sys.exit()
+        sys.exit(1)
     print("Flow to nmap tool")
     print("Welcome.............")
     print()

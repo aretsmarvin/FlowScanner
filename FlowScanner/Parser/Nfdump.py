@@ -28,7 +28,7 @@ class Nfdump:
             while line := file.readline():
                 data = line.split()
                 proto = data[3]
-                if proto == "TCP" or proto == "UDP":
+                if proto in ('TCP', 'UDP'):
                     self.Parse(data)
 
             return self.flow_list
