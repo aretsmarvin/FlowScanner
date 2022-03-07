@@ -1,4 +1,8 @@
 {
     "python.linting.pylintEnabled": true,
-    "python.linting.pylintArgs": ["--module-naming-style=PascalCase", "--class-naming-style=PascalCase", "--method-naming-style=PascalCase"]
+    "python.linting.pylintArgs": [
+        "--module-naming-style=PascalCase",
+        "--class-naming-style=PascalCase",
+        "--method-naming-style=PascalCase"
+    ]
 }
