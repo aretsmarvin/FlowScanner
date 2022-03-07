@@ -12,7 +12,8 @@ import requests
 
 class FlowFilter:
     """
-    Class
+    The FlowFilter class is responsible for filtering the server
+    IP's and port out of the flow data.
     """
     ports: Dict[str, Dict[int, float]] = {}
     ports_dict_filled = False
@@ -20,7 +21,7 @@ class FlowFilter:
 
     def ServerFilter(self, flowlist: list):
         """
-        Func
+        Main function to filter the server IP's and corresponding ports
         """
         for flow in flowlist:
             if flow.ip_source.is_multicast:
@@ -45,7 +46,8 @@ class FlowFilter:
 
     def LoadNMAPServices(self) -> None:
         """
-        Func
+        Loads values from NMAP services file. Checks if the file
+        exists on the disk. If not, it downloads a new one.
         """
         if not path.exists(os.getenv('nmap_services_file_location')):
             print("Nmap file not found, trying to fetch new one from the internet...")
@@ -76,7 +78,10 @@ class FlowFilter:
 
     def NmapPortLogic(self, port1: int, port2: int, proto: str) -> int:
         """
-        Func
+        Function which checks with the NMAP common port file
+        if it is a common port, and what is the probability.
+        It returns: 1 when port1 is a server port. -1 when it cannot
+        decide which is the server port. 1 when port2 is a server port.
         """
         if not self.ports_dict_filled:
             self.LoadNMAPServices()
@@ -91,7 +96,9 @@ class FlowFilter:
 
     def AddIPToList(self, ip_address, port) -> None:
         """
-        Func
+        Function to add IP address, with port number to the list.
+        Checks if IP already exists. If so, it also checks if the
+        port already exsists with that IP address.
         """
         searchresult = next((item for item in self.ip_port_dict
                             if item["ipaddress"] == ip_address), None)

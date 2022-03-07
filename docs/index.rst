@@ -1,7 +1,7 @@
 .. Documentation of FlowScanner, created by
    Marvin Arets on 0703-2022.
 
-Welcome to sample's documentation!
-==================================
+FlowScanner
+===========
 
-WIP
+This scanner is made as an graduation internship assignment at SURF.
