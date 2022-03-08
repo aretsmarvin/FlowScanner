@@ -7,6 +7,7 @@ import os
 from os import path
 import sys
 import ipaddress
+from ipaddress import ip_network
 from typing import Dict
 import requests
 
@@ -18,18 +19,23 @@ class FlowFilter:
     ports: Dict[str, Dict[int, float]] = {}
     ports_dict_filled = False
     ip_port_dict = [ ]
-    surf_nets = [  ]
+    surf_nets = [ ]
 
     def __init__(self):
         if not path.exists(os.getenv('known_ip_nets_file')):
             print("IP address file does not exist at " + os.getenv('known_ip_nets_file'))
         try:
+            ip_ranges = [ ]
             with open(os.getenv('known_ip_nets_file'), 'r', encoding="utf-8") as ip_file:
                 for net in ip_file:
                     try:
-                        self.surf_nets.append(str(net.splitlines()[0]))
+                        ip_ranges.append(str(net.splitlines()[0]))
                     except ValueError:
                         continue
+                self.surf_nets = [
+                    (range(int(n.network_address), int(n.broadcast_address)), n)
+                    for n in map(ip_network, ip_ranges)
+                ]
         except (IOError, AttributeError, AssertionError):
             print("Something went wrong...")
 
@@ -127,9 +133,12 @@ class FlowFilter:
     def CheckSURFIP(self, ip_address) -> bool:
         """
         Function to check if the provided IP address belongs to SURF
-        Returns a bool
+        Ryturns a bool
         """
-        for net in self.surf_nets:
-            if  ipaddress.ip_address(ip_address) in ipaddress.ip_network(net):
-                return True
+        ipaddr = int(ipaddress.ip_address(ip_address))
+
+        results = [n for r, n in self.surf_nets if ipaddr in r]
+        if results:
+            return True
+
         return False
