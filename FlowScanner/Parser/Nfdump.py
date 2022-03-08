@@ -5,7 +5,7 @@ Module to parse Nfdumpe'd files
 
 import ipaddress
 import re
-from FlowScanner.Type.Flow import Flow
+from FlowScanner.Types.Flow import Flow
 
 class Nfdump:
     """
