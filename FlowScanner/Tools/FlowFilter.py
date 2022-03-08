@@ -18,15 +18,29 @@ class FlowFilter:
     ports: Dict[str, Dict[int, float]] = {}
     ports_dict_filled = False
     ip_port_dict = [ ]
+    surf_nets = [  ]
+
+    def __init__(self):
+        if not path.exists(os.getenv('known_ip_nets_file')):
+            print("IP address file does not exist at " + os.getenv('known_ip_nets_file'))
+        try:
+            with open(os.getenv('known_ip_nets_file'), 'r', encoding="utf-8") as ip_file:
+                for net in ip_file:
+                    try:
+                        self.surf_nets.append(str(net.splitlines()[0]))
+                    except ValueError:
+                        continue
+        except (IOError, AttributeError, AssertionError):
+            print("Something went wrong...")
 
     def ServerFilter(self, flowlist: list):
         """
         Main function to filter the server IP's and corresponding ports
         """
         for flow in flowlist:
-            if flow.ip_source.is_multicast:
+            if flow.ip_source.is_multicast or flow.ip_source.is_link_local:
                 continue
-            if flow.ip_dest.is_multicast:
+            if flow.ip_dest.is_multicast or flow.ip_dest.is_link_local:
                 continue
             if flow.ip_source == ipaddress.ip_address("255.255.255.255"):
                 continue
@@ -35,13 +49,13 @@ class FlowFilter:
 
             match self.NmapPortLogic(flow.port_source, flow.port_dest, flow.proto):
                 case 1:
-                    self.AddIPToList(flow.ip_source, flow.port_source)
+                    self.AddIPToList(flow.ip_source, flow.port_source, flow.proto)
                 case 0:
                     ##More magic (if this event will occur, not sure yet, test with more data)
                     print("We need more magic!")
                     print(flow)
                 case -1:
-                    self.AddIPToList(flow.ip_dest, flow.port_dest)
+                    self.AddIPToList(flow.ip_dest, flow.port_dest, flow.proto)
         return self.ip_port_dict
 
     def LoadNMAPServices(self) -> None:
@@ -55,8 +69,8 @@ class FlowFilter:
                 url = os.getenv('nmap_web_file_url',
                                 "https://raw.githubusercontent.com/nmap/nmap/master/nmap-services")
                 req = requests.get(url, allow_redirects=True)
-                with open(os.getenv('nmap_services_file_location'), 'wb').write(req.content):
-                    print("File downloading...")
+                with open(os.getenv('nmap_services_file_location'), 'wb') as nmapfile:
+                    nmapfile.write(req.content)
             except IOError as exception:
                 print("Cannot download file: " + str(exception))
                 sys.exit(1)
@@ -94,7 +108,7 @@ class FlowFilter:
                 return (port2 > port1) - (port2 < port1)
         return cmpval
 
-    def AddIPToList(self, ip_address, port) -> None:
+    def AddIPToList(self, ip_address, port, proto) -> None:
         """
         Function to add IP address, with port number to the list.
         Checks if IP already exists. If so, it also checks if the
@@ -103,8 +117,19 @@ class FlowFilter:
         searchresult = next((item for item in self.ip_port_dict
                             if item["ipaddress"] == ip_address), None)
         if searchresult is None:
-            temp_dict = { "ipaddress": ip_address, "portlist": [ port ] }
-            self.ip_port_dict.append(temp_dict)
+            if self.CheckSURFIP(ip_address):
+                temp_dict = { "ipaddress": ip_address, "portlist": [ str(port) + "/"  + proto] }
+                self.ip_port_dict.append(temp_dict)
         else:
-            if not port in searchresult["portlist"]:
-                searchresult["portlist"].append(port)
+            if not str(port) + "/" + proto in searchresult["portlist"]:
+                searchresult["portlist"].append(str(port) + "/" + proto)
+
+    def CheckSURFIP(self, ip_address) -> bool:
+        """
+        Function to check if the provided IP address belongs to SURF
+        Returns a bool
+        """
+        for net in self.surf_nets:
+            if  ipaddress.ip_address(ip_address) in ipaddress.ip_network(net):
+                return True
+        return False
