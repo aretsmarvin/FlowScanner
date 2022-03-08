@@ -120,6 +120,7 @@ class FlowFilter:
         Checks if IP already exists. If so, it also checks if the
         port already exsists with that IP address.
         """
+        print("Temp " + proto)
         searchresult = next((item for item in self.ip_port_dict
                             if item["ipaddress"] == ip_address), None)
         if searchresult is None:

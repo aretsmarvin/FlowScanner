@@ -9,6 +9,7 @@ from os import path
 import sys
 from dotenv import load_dotenv
 from FlowScanner.Tools.FlowFilter import FlowFilter
+from FlowScanner.Tools.Scans import Scans
 from FlowScanner.Parser.Nfdump import Nfdump
 
 def main() -> None:
@@ -27,7 +28,13 @@ def main() -> None:
 
     nfdump = Nfdump(os.getenv('flow_file_location'))
     flow_filter = FlowFilter()
-    print(flow_filter.ServerFilter(nfdump.Filter()))
+    scans = Scans()
+
+    flow_list = nfdump.Filter()
+    server_list = flow_filter.ServerFilter(flow_list)
+    scans.Perform(server_list)
+    print(server_list)
+
 
 if __name__ == "__main__":
     main()
