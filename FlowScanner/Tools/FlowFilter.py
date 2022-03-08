@@ -55,13 +55,13 @@ class FlowFilter:
 
             match self.NmapPortLogic(flow.port_source, flow.port_dest, flow.proto):
                 case 1:
-                    self.AddIPToList(flow.ip_source, flow.port_source, flow.proto)
+                    self.AddIPToList(flow.ip_version, flow.ip_source, flow.port_source, flow.proto)
                 case 0:
                     ##More magic (if this event will occur, not sure yet, test with more data)
                     print("We need more magic!")
                     print(flow)
                 case -1:
-                    self.AddIPToList(flow.ip_dest, flow.port_dest, flow.proto)
+                    self.AddIPToList(flow.ip_version, flow.ip_dest, flow.port_dest, flow.proto)
         return self.ip_port_dict
 
     def LoadNMAPServices(self) -> None:
@@ -114,7 +114,7 @@ class FlowFilter:
                 return (port2 > port1) - (port2 < port1)
         return cmpval
 
-    def AddIPToList(self, ip_address, port, proto) -> None:
+    def AddIPToList(self, ip_version, ip_address, port, proto) -> None:
         """
         Function to add IP address, with port number to the list.
         Checks if IP already exists. If so, it also checks if the
@@ -124,11 +124,13 @@ class FlowFilter:
                             if item["ipaddress"] == ip_address), None)
         if searchresult is None:
             if self.CheckSURFIP(ip_address):
-                temp_dict = { "ipaddress": ip_address, "portlist": [ str(port) + "/"  + proto] }
+                temp_dict = { "ip_version": ip_version,
+                                "ipaddress": ip_address,
+                                "portlist": [ str(port)] }
                 self.ip_port_dict.append(temp_dict)
         else:
-            if not str(port) + "/" + proto in searchresult["portlist"]:
-                searchresult["portlist"].append(str(port) + "/" + proto)
+            if not str(port) in searchresult["portlist"]:
+                searchresult["portlist"].append(str(port))
 
     def CheckSURFIP(self, ip_address) -> bool:
         """
