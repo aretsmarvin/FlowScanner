@@ -42,13 +42,16 @@ class Nfdump:
         ##IPv4 regex
         # pylint: disable=line-too-long
         if re.search(r"^((?:(?:\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?:\.(?!\:)|)){4})\:(?!0)(\d{1,4}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$", data[4]):
+            ip_version = "IPv4"
             ip_source, port_source = data[4].split(':')
             ip_dest, port_dest = data[6].split(':')
         else:
+            ip_version = "IPv6"
             ip_source, port_source = data[4].rsplit('.', 1)
             ip_dest, port_dest = data[6].rsplit('.', 1)
 
-        output = Flow(proto,
+        output = Flow(ip_version,
+                    proto,
                     ipaddress.ip_address(ip_source),
                     int(port_source),
                     ipaddress.ip_address(ip_dest),

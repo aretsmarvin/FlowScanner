@@ -11,6 +11,7 @@ class Flow(NamedTuple):
     """
     Class that represents a 'Flow' type
     """
+    ip_version: str
     proto: str
     ip_source: ipaddress.ip_address
     port_source: int
