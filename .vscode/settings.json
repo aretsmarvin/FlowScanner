@@ -3,6 +3,7 @@
     "python.linting.pylintArgs": [
         "--module-naming-style=PascalCase",
         "--class-naming-style=PascalCase",
-        "--method-naming-style=PascalCase"
+        "--method-naming-style=PascalCase",
+        "--function-naming-style=PascalCase"
     ]
 }
