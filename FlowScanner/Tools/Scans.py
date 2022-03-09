@@ -43,7 +43,8 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     """
     command = ['nmap',
                 str(ip_address),
-                '-p', port_list,
+                '-p',
+                port_list,
                 '-Pn',
                 '-oX',
                 '/home/marvin/Bureaublad/FlowScanner/Files/output.xml',
@@ -59,7 +60,8 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     """
     command = ['nmap',
                 str(ip_address),
-                '-p', ','.join(port_list),
+                '-p',
+                port_list,
                 '-Pn',
                 '-sU',
                 '-oX',
