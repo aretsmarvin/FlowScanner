@@ -128,6 +128,7 @@ class FlowFilter:
             port_udp = port
         searchresult = next((item for item in self.ip_port_dict
                             if item["ipaddress"] == ip_address), None)
+
         if searchresult is None:
             if self.CheckSURFIP(ip_address):
                 temp_dict = {
