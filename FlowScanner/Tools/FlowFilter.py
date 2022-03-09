@@ -120,18 +120,30 @@ class FlowFilter:
         Checks if IP already exists. If so, it also checks if the
         port already exsists with that IP address.
         """
-        print("Temp " + proto)
+        port_tcp = None
+        port_udp = None
+        if proto == "TCP":
+            port_tcp = port
+        elif proto == "UDP":
+            port_udp = port
         searchresult = next((item for item in self.ip_port_dict
                             if item["ipaddress"] == ip_address), None)
         if searchresult is None:
             if self.CheckSURFIP(ip_address):
-                temp_dict = { "ip_version": ip_version,
+                temp_dict = {
+                                "ip_version": ip_version,
                                 "ipaddress": ip_address,
-                                "portlist": [ str(port)] }
+                                "portlist_tcp": [ str(port_tcp)],
+                                "portlist_udp": [ str(port_udp)]
+                            }
                 self.ip_port_dict.append(temp_dict)
         else:
-            if not str(port) in searchresult["portlist"]:
-                searchresult["portlist"].append(str(port))
+            if port_tcp:
+                if not str(port_tcp) in searchresult["portlist_tcp"]:
+                    searchresult["portlist_tcp"].append(str(port_tcp))
+            elif port_udp:
+                if not str(port_udp) in searchresult["portlist_udp"]:
+                    searchresult["portlist_udp"].append(str(port_udp))
 
     def CheckSURFIP(self, ip_address) -> bool:
         """
