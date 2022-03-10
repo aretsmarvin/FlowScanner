@@ -16,25 +16,24 @@ from FlowScanner.Parser.Nfdump import Nfdump
 if __name__ == "__main__":
     load_dotenv()
     patterns = ["*"]
-    my_event_handler = PatternMatchingEventHandler(patterns, None, False, True)
+    new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
+    nfdump = Nfdump()
+    flow_filter = FlowFilter()
 
 def OnCreated(event):
     """
     docstring
     """
-    nfdump = Nfdump(event.src_path)
-    flow_filter = FlowFilter()
-
-    flow_list = nfdump.Filter()
+    flow_list = nfdump.Filter(event.src_path)
     server_list = flow_filter.ServerFilter(flow_list)
     PerformScans(server_list)
     os.remove(event.src_path)
 
-my_event_handler.on_created = OnCreated
+new_flow_file_handler.on_created = OnCreated
 
 PATH = "/home/marvin/Bureaublad/FlowScanner/Files/Flows"
 flow_file_observer = Observer()
-flow_file_observer.schedule(my_event_handler, PATH, False)
+flow_file_observer.schedule(new_flow_file_handler, PATH, False)
 
 flow_file_observer.start()
 

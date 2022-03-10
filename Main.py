@@ -26,10 +26,10 @@ def Main() -> None:
     print("Welcome.............")
     print()
 
-    nfdump = Nfdump(os.getenv('flow_file_location'))
+    nfdump = Nfdump()
     flow_filter = FlowFilter()
 
-    flow_list = nfdump.Filter()
+    flow_list = nfdump.Filter(os.getenv('flow_file_location'))
     server_list = flow_filter.ServerFilter(flow_list)
     PerformScans(server_list)
 
