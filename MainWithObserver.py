@@ -31,7 +31,7 @@ def OnCreated(event):
 
 new_flow_file_handler.on_created = OnCreated
 
-PATH = "/home/marvin/Bureaublad/FlowScanner/Files/Flows"
+PATH = os.getenv('flow_files_folder')
 flow_file_observer = Observer()
 flow_file_observer.schedule(new_flow_file_handler, PATH, False)
 
