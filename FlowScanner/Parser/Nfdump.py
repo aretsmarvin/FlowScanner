@@ -13,14 +13,11 @@ class Nfdump:
     """
     flow_list = []
 
-    def __init__(self, file_location):
-        self.file_location = file_location
-
-    def Filter(self):
+    def Filter(self, file_location):
         """
         Function to filter only UDP and TCP from an nfdump line
         """
-        with open(self.file_location, 'r', encoding="utf-8") as file:
+        with open(file_location, 'r', encoding="utf-8") as file:
             ##Check if file contains nfdump's header row (if yes, skip first line)
             if not file.readline().startswith('Date'):
                 file.seek(0, 0)
