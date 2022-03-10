@@ -53,8 +53,7 @@ class FlowFilter:
             if flow.ip_dest == ipaddress.ip_address("255.255.255.255"):
                 continue
 
-            server_port = self.NmapPortLogic(flow.port_source, flow.port_dest, flow.proto)
-            match server_port:
+            match self.NmapPortLogic(flow.port_source, flow.port_dest, flow.proto):
                 case 1:
                     self.AddIPToList(flow.ip_version, flow.ip_source, flow.port_source, flow.proto)
                 case 0:
