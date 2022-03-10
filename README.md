@@ -12,3 +12,6 @@ IMPORTANT: The script requires Python 3.10, any older version will not work!
 ```bash
 $ pip3 install -r requirements.txt
 ```
+## Configuration
+
+Copy and rename the `.env.example` file to `.env` and change it's values.
