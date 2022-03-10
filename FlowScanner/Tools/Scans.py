@@ -4,6 +4,7 @@ Module to perform the scans
 #! /usr/bin/env python
 from multiprocessing.pool import ThreadPool
 import subprocess
+import os
 
 def PerformScans(server_list) -> None:
     """
@@ -42,10 +43,10 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     TODO: fill this
     """
     command = ['nmap',
+                '-sV',
                 str(ip_address),
                 '-p',
                 port_list,
-                '-Pn',
                 '-oX',
                 '/home/marvin/Bureaublad/FlowScanner/Files/output.xml',
                 '--append-output']
@@ -53,16 +54,17 @@ def NmapTCPScan(ip_version, ip_address, port_list):
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
+        os.system("stty echo")
 
 def NmapUDPScan(ip_version, ip_address, port_list):
     """
     TODO: fill this
     """
     command = ['nmap',
+                '-sV',
                 str(ip_address),
                 '-p',
                 port_list,
-                '-Pn',
                 '-sU',
                 '-oX',
                 '/home/marvin/Bureaublad/FlowScanner/Files/output.xml',
@@ -71,3 +73,4 @@ def NmapUDPScan(ip_version, ip_address, port_list):
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
+        os.system("stty echo")
