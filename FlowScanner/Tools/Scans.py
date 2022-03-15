@@ -48,8 +48,7 @@ def NmapTCPScan(ip_version, ip_address, port_list):
                 '-p',
                 port_list,
                 '-oX',
-                '/home/marvin/Bureaublad/FlowScanner/Files/output.xml',
-                '--append-output']
+                '/tmp/FlowScanner/output_tcp_' + str(ip_address) + '.xml']
     if ip_version == "IPv6":
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
@@ -67,7 +66,7 @@ def NmapUDPScan(ip_version, ip_address, port_list):
                 port_list,
                 '-sU',
                 '-oX',
-                '/home/marvin/Bureaublad/FlowScanner/Files/output.xml',
+                '/tmp/FlowScanner/output_udp_' + str(ip_address) + '.xml',
                 '--append-output']
     if ip_version == "IPv6":
         command.append('-6')
