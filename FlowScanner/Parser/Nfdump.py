@@ -3,7 +3,7 @@ Module to parse Nfdumpe'd files
 """
 #! /usr/bin/env python
 
-import ipaddress
+import netaddr
 import re
 from FlowScanner.Types.Flow import Flow
 
@@ -49,9 +49,9 @@ class Nfdump:
 
         output = Flow(ip_version,
                     proto,
-                    ipaddress.ip_address(ip_source),
+                    netaddr.IPAddress(ip_source),
                     int(port_source),
-                    ipaddress.ip_address(ip_dest),
+                    netaddr.IPAddress(ip_dest),
                     int(port_dest),
                     flags)
         self.flow_list.append(output)

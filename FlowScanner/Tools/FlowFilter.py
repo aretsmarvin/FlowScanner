@@ -6,10 +6,9 @@ Module to filter server IP's from (Net)Flow
 import os
 from os import path
 import sys
-import ipaddress
-from ipaddress import ip_network
 from typing import Dict
 import requests
+import netaddr
 
 class FlowFilter:
     """
@@ -19,23 +18,35 @@ class FlowFilter:
     ports: Dict[str, Dict[int, float]] = {}
     ports_dict_filled = False
     ip_port_dict = [ ]
-    surf_nets = [ ]
+    surf_nets = None
 
     def __init__(self):
+        self.surf_nets = netaddr.IPSet()
         if not path.exists(os.getenv('known_ip_nets_file')):
             print("IP address file does not exist at " + os.getenv('known_ip_nets_file'))
+            sys.exit()
+        self.LoadIPS(os.getenv('known_ip_nets_file'), os.getenv('ip_block_list_file'))
+
+    def LoadIPS(self, scope_filename, exclude_filename=None):
+        '''
+        Load IPs in scope from the filename provided. Excludes IPs if excludelist provided.
+        '''
         try:
-            ip_ranges = [ ]
-            with open(os.getenv('known_ip_nets_file'), 'r', encoding="utf-8") as ip_file:
-                for net in ip_file:
+            with open(scope_filename, 'r', encoding="utf-8") as ip_file:
+                for net in ip_file.read().splitlines():
                     try:
-                        ip_ranges.append(str(net.splitlines()[0]))
+                        self.surf_nets.add(netaddr.IPNetwork(net))
                     except ValueError:
                         continue
-                self.surf_nets = [
-                    (range(int(n.network_address), int(n.broadcast_address)), n)
-                    for n in map(ip_network, ip_ranges)
-                ]
+        except (IOError, AttributeError, AssertionError):
+            print("Something went wrong...")
+        try:
+            with open(exclude_filename, 'r', encoding="utf-8") as block_file:
+                for line in block_file:
+                    try:
+                        self.surf_nets.remove(line)
+                    except ValueError:
+                        continue
         except (IOError, AttributeError, AssertionError):
             print("Something went wrong...")
 
@@ -44,13 +55,13 @@ class FlowFilter:
         Main function to filter the server IP's and corresponding ports
         """
         for flow in flowlist:
-            if flow.ip_source.is_multicast or flow.ip_source.is_link_local:
+            if flow.ip_source.is_multicast() or flow.ip_source.is_link_local():
                 continue
-            if flow.ip_dest.is_multicast or flow.ip_dest.is_link_local:
+            if flow.ip_dest.is_multicast() or flow.ip_dest.is_link_local():
                 continue
-            if flow.ip_source == ipaddress.ip_address("255.255.255.255"):
+            if flow.ip_source == netaddr.IPAddress("255.255.255.255"):
                 continue
-            if flow.ip_dest == ipaddress.ip_address("255.255.255.255"):
+            if flow.ip_dest == netaddr.IPAddress("255.255.255.255"):
                 continue
 
             match self.NmapPortLogic(flow.port_source, flow.port_dest, flow.proto):
@@ -130,7 +141,7 @@ class FlowFilter:
                             if item["ipaddress"] == ip_address), None)
 
         if searchresult is None:
-            if self.CheckSURFIP(ip_address):
+            if netaddr.IPAddress(ip_address) in self.surf_nets:
                 temp_dict = {
                                 "ip_version": ip_version,
                                 "ipaddress": ip_address,
@@ -145,16 +156,3 @@ class FlowFilter:
             elif port_udp:
                 if not str(port_udp) in searchresult["portlist_udp"]:
                     searchresult["portlist_udp"].append(str(port_udp))
-
-    def CheckSURFIP(self, ip_address) -> bool:
-        """
-        Function to check if the provided IP address belongs to SURF
-        Ryturns a bool
-        """
-        ipaddr = int(ipaddress.ip_address(ip_address))
-
-        results = [n for r, n in self.surf_nets if ipaddr in r]
-        if results:
-            return True
-
-        return False

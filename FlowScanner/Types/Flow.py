@@ -5,7 +5,7 @@ Module that represents a 'Flow' type
 #! /usr/bin/env python
 
 from typing import NamedTuple
-import ipaddress
+import netaddr
 
 class Flow(NamedTuple):
     """
@@ -13,8 +13,8 @@ class Flow(NamedTuple):
     """
     ip_version: str
     proto: str
-    ip_source: ipaddress.ip_address
+    ip_source: netaddr.IPAddress
     port_source: int
-    ip_dest: ipaddress.ip_address
+    ip_dest: netaddr.IPAddress
     port_dest: int
     flags: str
