@@ -22,8 +22,14 @@ if __name__ == "__main__":
 
 def OnCreated(event):
     """
-    docstring
+    Event handler for when new file is created. Checks if nobody is writing to file.
     """
+    last_modified = os.path.getmtime(event.src_path)
+    while last_modified is not None:
+        current = os.path.getmtime(event.src_path)
+        time.sleep(1)
+        if current == last_modified:
+            last_modified = None
     flow_list = nfdump.Filter(event.src_path)
     server_list = flow_filter.ServerFilter(flow_list)
     PerformScans(server_list)
