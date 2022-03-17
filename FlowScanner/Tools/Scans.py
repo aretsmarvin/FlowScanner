@@ -5,6 +5,7 @@ Module to perform the scans
 from multiprocessing.pool import ThreadPool
 import subprocess
 import os
+import shutil
 
 def PerformScans(server_list) -> None:
     """
@@ -32,6 +33,8 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     if 'None' in port_list_udp:
         port_list_udp.remove('None')
 
+    os.mkdir(os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address))
+
     if port_list_tcp:
         NmapTCPScan(ip_version, ip_address, ','.join(port_list_tcp))
 
@@ -41,7 +44,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     command = ['ivre',
                 'scan2db',
                 '-c',
-                'netflow',
+                'Netflow',
                 '-r',
                 os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address)
                 ]
@@ -52,28 +55,25 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
                 'db2view',
                 'nmap',
                 '--category',
-                'netflow'
+                'Netflow'
                 ]
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
+
+    shutil.rmtree(os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address), ignore_errors=True)
 
 def NmapTCPScan(ip_version, ip_address, port_list):
     """
     TODO: fill this
     """
     command = ['nmap',
+                '--script=auth,malware,vuln',
                 '-sV',
                 str(ip_address),
                 '-p',
                 port_list,
-                '--script',
-                'auth,malware,vuln',
                 '-oX',
-                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/tcp.xml',
-                'ivre',
-                'scan2db',
-                '-c',
-                'service']
+                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/tcp.xml']
     if ip_version == "IPv6":
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
@@ -85,13 +85,12 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     TODO: fill this
     """
     command = ['nmap',
+                '--script=auth,malware,vuln',
                 '-sV',
                 str(ip_address),
                 '-p',
                 port_list,
                 '-sU',
-                '--script',
-                'auth,malware,vuln',
                 '-oX',
                 os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/udp.xml',
                 '--append-output']
