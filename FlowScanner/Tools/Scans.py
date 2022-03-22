@@ -23,7 +23,6 @@ def PerformScans(server_list) -> None:
     thread_pool.close()
     thread_pool.join()
 
-
 def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
     TODO: fill this
@@ -46,8 +45,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
                 '-c',
                 'Netflow',
                 '-r',
-                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address)
-                ]
+                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address)]
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
 
@@ -55,8 +53,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
                 'db2view',
                 'nmap',
                 '--category',
-                'Netflow'
-                ]
+                'Netflow']
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
 
@@ -92,8 +89,7 @@ def NmapUDPScan(ip_version, ip_address, port_list):
                 port_list,
                 '-sU',
                 '-oX',
-                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/udp.xml',
-                '--append-output']
+                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/udp.xml']
     if ip_version == "IPv6":
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
