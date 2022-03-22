@@ -26,3 +26,7 @@ $ sudo python3.10 MainWithObserver.py
 ```
 
 This command will run the file observer. It does nothing, untill you put a flow file in the 'flow_file_folder' folder, specified in the .env file.
+
+## Expansion
+
+The NMAP scans can be expanded, by adding [NSE scripts](https://nmap.org/book/nse.html) to the `Files/Scripts` folder. Every NSE file added to this folder will be executed upon a scan.
