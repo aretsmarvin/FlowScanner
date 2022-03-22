@@ -13,13 +13,17 @@ license = "Same as Nmap--See https://nmap.org/book/man-legal.html"
 portrule = shortport.ssl  
 
 action = function(host,port)
+	ipv6=""
+	if nmap.address_family() ~= "inet" then
+	  ipv6="-6"
+	end
 	local severity = stdnse.get_script_args("test-ssl.severity")
 	local handle = ""
 	local stamp = os.time(os.date("!*t"))
 	if (severity == "LOW" or severity == "MEDIUM" or severity == "HIGH" or severity == "CRITICAL") then 
-		handle = io.popen("/home/ubuntu/testssl.sh/testssl.sh --warnings batch --severity " .. severity .. " --jsonfile /home/ubuntu/testssl.sh/scans/" .. host.ip .. ":" ..  port.number .. "-" .. stamp .. " " .. host.ip .. ":" .. port.number .. " > /dev/null; cat /home/ubuntu/testssl.sh/scans/" .. host.ip .. ":" .. port.number .. "-" .. stamp) 
+		handle = io.popen("/home/ubuntu/testssl.sh/testssl.sh " .. ipv6 .. " --warnings batch --severity " .. severity .. " --jsonfile /home/ubuntu/testssl.sh/scans/" .. host.ip .. ":" ..  port.number .. "-" .. stamp .. " [" .. host.ip .. "]:" .. port.number .. " > /dev/null; cat /home/ubuntu/testssl.sh/scans/" .. host.ip .. ":" .. port.number .. "-" .. stamp) 
 	else 
-		handle = io.popen("/home/ubuntu/testssl.sh/testssl.sh --warnings batch --severity HIGH --jsonfile /home/ubuntu/testssl.sh/scans/" .. host.ip .. ":" ..  port.number .. "-" .. stamp .. " " .. host.ip .. ":" .. port.number .. " > /dev/null; cat /home/ubuntu/testssl.sh/scans/" .. host.ip .. ":" .. port.number .. "-" .. stamp) 
+		handle = io.popen("/home/ubuntu/testssl.sh/testssl.sh " .. ipv6 .. " --warnings batch --severity HIGH --jsonfile /home/ubuntu/testssl.sh/scans/" .. host.ip .. ":" ..  port.number .. "-" .. stamp .. " [" .. host.ip .. "]:" .. port.number .. " > /dev/null; cat /home/ubuntu/testssl.sh/scans/" .. host.ip .. ":" .. port.number .. "-" .. stamp) 
 	end 
 	local result = handle:read("*a") 
 	handle:close()
