@@ -9,7 +9,8 @@ import shutil
 
 def PerformScans(server_list) -> None:
     """
-    TODO: fill this
+    Starts scan workers, based on the provided server list.
+    Uses system resources according to availability.
     """
     num = None
     thread_pool = ThreadPool(num)
@@ -25,7 +26,7 @@ def PerformScans(server_list) -> None:
 
 def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
-    TODO: fill this
+    One worker, that performs a scan, per IP and corresponding ports.
     """
     if 'None' in port_list_tcp:
         port_list_tcp.remove('None')
@@ -61,7 +62,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
 
 def NmapTCPScan(ip_version, ip_address, port_list):
     """
-    TODO: fill this
+    Perfroms Nmap scan on the TCP ports.
     """
     command = ['nmap',
                 '--script=auth,malware,vuln,' + os.getenv('nmap_custom_scripts'),
@@ -79,7 +80,7 @@ def NmapTCPScan(ip_version, ip_address, port_list):
 
 def NmapUDPScan(ip_version, ip_address, port_list):
     """
-    TODO: fill this
+    Performs Nmap scan on the UDP ports.
     """
     command = ['nmap',
                 '--script=auth,malware,vuln,' + os.getenv('nmap_custom_scripts'),
