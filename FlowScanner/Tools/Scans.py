@@ -64,7 +64,7 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     TODO: fill this
     """
     command = ['nmap',
-                '--script=auth,malware,vuln',
+                '--script=auth,malware,vuln,' + os.getenv('nmap_custom_scripts'),
                 '-sV',
                 str(ip_address),
                 '-p',
@@ -82,7 +82,7 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     TODO: fill this
     """
     command = ['nmap',
-                '--script=auth,malware,vuln',
+                '--script=auth,malware,vuln,' + os.getenv('nmap_custom_scripts'),
                 '-sV',
                 str(ip_address),
                 '-p',
