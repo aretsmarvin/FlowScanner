@@ -17,6 +17,7 @@ class Nfdump:
         """
         Function to filter only UDP and TCP from an nfdump line
         """
+        self.flow_list = [ ]
         with open(file_location, 'r', encoding="utf-8") as file:
             ##Check if file contains nfdump's header row (if yes, skip first line)
             if not file.readline().startswith('Date'):

@@ -54,6 +54,7 @@ class FlowFilter:
         """
         Main function to filter the server IP's and corresponding ports
         """
+        self.ip_port_dict = [ ]
         for flow in flowlist:
             if flow.ip_source.is_multicast() or flow.ip_source.is_link_local():
                 continue
