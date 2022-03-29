@@ -24,6 +24,15 @@ def PerformScans(server_list) -> None:
     thread_pool.close()
     thread_pool.join()
 
+def ScoringScan():
+    """
+    Performs quik scan on all provided IP and ports
+    checks if ports are open. If so, the score gets +1
+    if the port is closed the score gets -1.
+    If score reaches 0 the port will be removed.
+    """
+    print("Scoring scan...")
+
 def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
     One worker, that performs a scan, per IP and corresponding ports.
@@ -44,7 +53,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     command = ['ivre',
                 'scan2db',
                 '-c',
-                'Netflow',
+                'NetFlow',
                 '-r',
                 os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address)]
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
@@ -54,7 +63,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
                 'db2view',
                 'nmap',
                 '--category',
-                'Netflow']
+                'NetFlow']
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
 
@@ -70,6 +79,9 @@ def NmapTCPScan(ip_version, ip_address, port_list):
                 str(ip_address),
                 '-p',
                 port_list,
+                '-T4',
+                '--host-timeout',
+                '60m',
                 '-oX',
                 os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/tcp.xml']
     if ip_version == "IPv6":
@@ -88,6 +100,9 @@ def NmapUDPScan(ip_version, ip_address, port_list):
                 str(ip_address),
                 '-p',
                 port_list,
+                '-T4',
+                '--host-timeout',
+                '60m',
                 '-sU',
                 '-oX',
                 os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/udp.xml']
