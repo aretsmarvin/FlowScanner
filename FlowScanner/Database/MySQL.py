@@ -76,8 +76,7 @@ def DatabaseSetup() -> int:
         if mysqlerror.errno == errorcode.ER_TABLE_EXISTS_ERROR:
             print("Table already exists")
             return 1
-        else:
-            return -1
+        return -1
     alter_unique = ("ALTER TABLE `scans`"
                     "ADD UNIQUE KEY `id` (`id`),"
                     "ADD UNIQUE KEY `unique_index` (`ipaddress`,`port`);")
