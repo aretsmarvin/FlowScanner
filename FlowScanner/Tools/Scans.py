@@ -6,6 +6,7 @@ from multiprocessing.pool import ThreadPool
 import subprocess
 import os
 import shutil
+from FlowScanner.Database import MySQL
 
 def PerformScans(server_list) -> None:
     """
@@ -24,15 +25,6 @@ def PerformScans(server_list) -> None:
     thread_pool.close()
     thread_pool.join()
 
-def ScoringScan():
-    """
-    Performs quik scan on all provided IP and ports
-    checks if ports are open. If so, the score gets +1
-    if the port is closed the score gets -1.
-    If score reaches 0 the port will be removed.
-    """
-    print("Scoring scan...")
-
 def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
     One worker, that performs a scan, per IP and corresponding ports.
@@ -46,9 +38,13 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
 
     if port_list_tcp:
         NmapTCPScan(ip_version, ip_address, ','.join(port_list_tcp))
+        for port in port_list_tcp:
+            MySQL.InsertOrUpdateIPPort(ip_address, port, 'TCP')
 
     if port_list_udp:
         NmapUDPScan(ip_version, ip_address, ','.join(port_list_udp))
+        for port in port_list_udp:
+            MySQL.InsertOrUpdateIPPort(ip_address, port, 'UDP')
 
     command = ['ivre',
                 'scan2db',

@@ -138,6 +138,7 @@ class FlowFilter:
             port_tcp = port
         elif proto == "UDP":
             port_udp = port
+
         searchresult = next((item for item in self.ip_port_dict
                             if item["ipaddress"] == ip_address), None)
 

@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 from FlowScanner.Tools.FlowFilter import FlowFilter
+from FlowScanner.Tools.ScanFilter import ScanFilter
 from FlowScanner.Tools.Scans import PerformScans
 from FlowScanner.Parser.Nfdump import Nfdump
 
@@ -19,6 +20,7 @@ if __name__ == "__main__":
     new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
     nfdump = Nfdump()
     flow_filter = FlowFilter()
+    scan_filter = ScanFilter()
 
 def OnCreated(event):
     """
@@ -35,6 +37,7 @@ def OnCreated(event):
     server_list = None
     flow_list = nfdump.Filter(event.src_path)
     server_list = flow_filter.ServerFilter(flow_list)
+    scan_list = scan_filter.ScanTargetFilter(server_list)
     PerformScans(server_list)
     os.remove(event.src_path)
 
