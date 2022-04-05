@@ -38,7 +38,7 @@ def OnCreated(event):
     flow_list = nfdump.Filter(event.src_path)
     server_list = flow_filter.ServerFilter(flow_list)
     scan_list = scan_filter.ScanTargetFilter(server_list)
-    PerformScans(server_list)
+    PerformScans(scan_list)
     os.remove(event.src_path)
 
 new_flow_file_handler.on_created = OnCreated
