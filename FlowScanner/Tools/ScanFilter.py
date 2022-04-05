@@ -43,9 +43,7 @@ class ScanFilter:
                         str(ip_address),
                         port,
                         proto)
-            if last_scan_time is None:
-                port_list.remove(port)
-
-            elif (now - last_scan_time[0]).total_seconds() < 3600:
-                port_list.remove(port)
+            if last_scan_time is not None:
+                if (now - last_scan_time[0]).total_seconds() < 3600:
+                    port_list.remove(port)
         return port_list
