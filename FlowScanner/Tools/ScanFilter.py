@@ -4,6 +4,7 @@ that have been scanned less than a hour ago.
 """
 #! /usr/bin/env python
 
+import os
 from datetime import datetime
 from FlowScanner.Database import MySQL
 
@@ -44,6 +45,7 @@ class ScanFilter:
                         port,
                         proto)
             if last_scan_time is not None:
-                if (now - last_scan_time[0]).total_seconds() < 3600:
+                if (now - last_scan_time[0]).total_seconds() < int(
+                        os.getenv('min_scan_timeout_seconds', "3600")):
                     port_list.remove(port)
         return port_list
