@@ -2,11 +2,14 @@
 Module to perform the scans
 """
 #! /usr/bin/env python
-from multiprocessing.pool import ThreadPool
-import subprocess
+
 import os
 import shutil
+import subprocess
+from multiprocessing.pool import ThreadPool
+
 from FlowScanner.Database import MySQL
+
 
 def PerformScans(server_list) -> None:
     """
@@ -21,6 +24,7 @@ def PerformScans(server_list) -> None:
                                     server.get('ipaddress'),
                                     server.get('portlist_tcp'),
                                     server.get('portlist_udp'),))
+                                    ##, timeout=3600
 
     thread_pool.close()
     thread_pool.join()

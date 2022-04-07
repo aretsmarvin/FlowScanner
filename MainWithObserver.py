@@ -6,13 +6,15 @@ Main module with file observer for FlowScanner
 
 import os
 import time
+
 from dotenv import load_dotenv
-from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
+from watchdog.observers import Observer
+
+from FlowScanner.Parser.Nfdump import Nfdump
 from FlowScanner.Tools.FlowFilter import FlowFilter
 from FlowScanner.Tools.ScanFilter import ScanFilter
 from FlowScanner.Tools.Scans import PerformScans
-from FlowScanner.Parser.Nfdump import Nfdump
 
 if __name__ == "__main__":
     load_dotenv()

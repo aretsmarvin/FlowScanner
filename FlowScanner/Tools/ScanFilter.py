@@ -6,7 +6,9 @@ that have been scanned less than a hour ago.
 
 import os
 from datetime import datetime
+
 from FlowScanner.Database import MySQL
+
 
 class ScanFilter:
     """

@@ -5,7 +5,9 @@ Module that represents a 'Flow' type
 #! /usr/bin/env python
 
 from typing import NamedTuple
+
 import netaddr
+
 
 class Flow(NamedTuple):
     """

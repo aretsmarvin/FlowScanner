@@ -4,8 +4,10 @@ Module to parse Nfdumpe'd files
 #! /usr/bin/env python
 
 import re
+
 import netaddr
 from FlowScanner.Types.Flow import Flow
+
 
 class Nfdump:
     """

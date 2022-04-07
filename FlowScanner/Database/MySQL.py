@@ -1,8 +1,11 @@
 """
 Class for handling database queries.
 """
+#! /usr/bin/env python
+
 import os
 import sys
+
 import mysql.connector
 from dotenv import load_dotenv
 from mysql.connector import errorcode

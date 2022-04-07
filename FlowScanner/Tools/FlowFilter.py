@@ -4,11 +4,13 @@ Module to filter server IP's from (Net)Flow
 #! /usr/bin/env python
 
 import os
-from os import path
 import sys
+from os import path
 from typing import Dict
-import requests
+
 import netaddr
+import requests
+
 
 class FlowFilter:
     """
