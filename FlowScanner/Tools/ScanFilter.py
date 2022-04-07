@@ -15,7 +15,7 @@ class ScanFilter:
     The FlowFilter class is responsible for filtering the server
     IP's and port out of the flow data.
     """
-    
+
     def ScanTargetFilter(self, ip_ports_list: list):
         """
         Main function to filter the server IP's and corresponding ports
