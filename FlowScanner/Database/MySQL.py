@@ -5,18 +5,19 @@ Class for handling database queries.
 
 import os
 import sys
+import dotenv
 
 import mysql.connector
-from dotenv import load_dotenv
 from mysql.connector import errorcode
 
 try:
-    load_dotenv()
+    dotenv.load_dotenv('.env')
+
     connection = mysql.connector.connect(host=os.getenv('db_host'),
-                                        username=os.getenv('db_username'),
-                                        password=os.getenv('db_password'),
-                                        database=os.getenv('db_database'),
-                                        port=os.getenv('db_port', "3306"))
+                                    username=os.getenv('db_username'),
+                                    password=os.getenv('db_password'),
+                                    database=os.getenv('db_database'),
+                                    port=os.getenv('db_port', "3306"))
     cursor = connection.cursor()
 except mysql.connector.Error as err:
     print(err)
