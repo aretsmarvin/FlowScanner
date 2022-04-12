@@ -7,6 +7,8 @@ $ python setup.py build
 
 from setuptools import setup, find_packages
 
+from FlowScanner.Database import MySQL
+
 VERSION = __import__("FlowScanner").VERSION
 
 setup(name='FlowScanner',
@@ -26,3 +28,5 @@ setup(name='FlowScanner',
         ],
         scripts=['Bin/FlowScanner'],
 )
+
+MySQL.DatabaseSetup()
