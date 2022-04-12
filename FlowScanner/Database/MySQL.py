@@ -74,9 +74,9 @@ def DatabaseSetup() -> int:
     "`id` int(11) NOT NULL,"
     "`ipaddress` varchar(64) NOT NULL,"
     "`port` mediumint(9) NOT NULL,"
-    "`proto` ENUM('TCP', 'UDP')"
-    "`last_scanned` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()"
-    ") ENGINE=InnoDB DEFAULT CHARSET=latin1;")
+    "`proto` ENUM('TCP', 'UDP'),"
+    "`last_scanned` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp())"
+    " ENGINE=InnoDB DEFAULT CHARSET=latin1;")
     try:
         Execute(insert_structure, False, (), True)
     except mysql.connector.Error as mysqlerror:
