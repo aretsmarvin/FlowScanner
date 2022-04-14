@@ -9,7 +9,6 @@ from datetime import datetime
 
 from FlowScanner.Database import MySQL
 
-
 class ScanFilter:
     """
     The FlowFilter class is responsible for filtering the server
@@ -33,6 +32,7 @@ class ScanFilter:
                                                 ip_ports.get('portlist_udp'),
                                                 "UDP")
                 ip_ports['portlist_udp'] = new_portlist
+        MySQL.Close()
         return ip_ports_list
 
     @staticmethod
