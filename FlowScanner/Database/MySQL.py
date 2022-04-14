@@ -10,18 +10,7 @@ import dotenv
 import mysql.connector
 from mysql.connector import errorcode
 
-try:
-    dotenv.load_dotenv('.env')
-
-    connection = mysql.connector.connect(host=os.getenv('db_host'),
-                                    username=os.getenv('db_username'),
-                                    password=os.getenv('db_password'),
-                                    database=os.getenv('db_database'),
-                                    port=os.getenv('db_port', "3306"))
-
-except mysql.connector.Error as err:
-    print(err)
-    sys.exit()
+dotenv.load_dotenv('.env')
 
 def InsertOrUpdateIPPort(ip_address, port, proto) -> int:
     """
@@ -107,7 +96,17 @@ def Execute(sqltuple, single = False, args = None, commit = False) -> int:
     Function that handles SQL queries.
     Returns amount of rows executed.
     """
-    cursor = connection.cursor()
+    try:
+        connection = mysql.connector.connect(host=os.getenv('db_host'),
+                                        username=os.getenv('db_username'),
+                                        password=os.getenv('db_password'),
+                                        database=os.getenv('db_database'),
+                                        port=os.getenv('db_port', "3306"))
+        cursor = connection.cursor()
+    except mysql.connector.Error as err:
+        print(err)
+        sys.exit()
+
     cursor.execute(sqltuple, args)
 
     if commit:
@@ -121,4 +120,4 @@ def Execute(sqltuple, single = False, args = None, commit = False) -> int:
         result = cursor.fetchall()
 
     connection.close()
-    return result    
+    return result
