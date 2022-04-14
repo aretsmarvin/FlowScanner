@@ -18,7 +18,7 @@ try:
                                     password=os.getenv('db_password'),
                                     database=os.getenv('db_database'),
                                     port=os.getenv('db_port', "3306"))
-    cursor = connection.cursor()
+
 except mysql.connector.Error as err:
     print(err)
     sys.exit()
@@ -107,20 +107,18 @@ def Execute(sqltuple, single = False, args = None, commit = False) -> int:
     Function that handles SQL queries.
     Returns amount of rows executed.
     """
+    cursor = connection.cursor()
     cursor.execute(sqltuple, args)
 
     if commit:
         connection.commit()
-        return cursor.rowcount
+        result = cursor.rowcount
 
-    if single:
-        return cursor.fetchone()
+    elif single:
+        result = cursor.fetchone()
 
-    return cursor.fetchall()
+    else:
+        result = cursor.fetchall()
 
-
-def Close():
-    """
-    Function to close database connection.
-    """
     connection.close()
+    return result    

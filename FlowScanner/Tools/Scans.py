@@ -28,7 +28,6 @@ def PerformScans(server_list) -> None:
 
     thread_pool.close()
     thread_pool.join()
-    MySQL.Close()
 
 def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
