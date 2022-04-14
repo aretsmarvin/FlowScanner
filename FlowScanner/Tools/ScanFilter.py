@@ -23,12 +23,12 @@ class ScanFilter:
         hour ago.
         """
         for ip_ports in ip_ports_list:
-            if not 'None' in ip_ports.get('portlist_tcp'):
+            if ip_ports.get('portlist_tcp'):
                 new_portlist = self.PortFilter(ip_ports.get('ipaddress'),
                                                 ip_ports.get('portlist_tcp'),
                                                 "TCP")
                 ip_ports['portlist_tcp'] = new_portlist
-            if not 'None' in ip_ports.get('portlist_udp'):
+            if ip_ports.get('portlist_udp'):
                 new_portlist = self.PortFilter(ip_ports.get('ipaddress'),
                                                 ip_ports.get('portlist_udp'),
                                                 "UDP")
@@ -41,7 +41,8 @@ class ScanFilter:
         Function to filter recently scanned ports from IP.
         """
         now = datetime.now()
-        for port in port_list:
+        loop_list = port_list.copy()
+        for port in loop_list:
             last_scan_time = MySQL.GetLastScanTime(
                         str(ip_address),
                         port,
