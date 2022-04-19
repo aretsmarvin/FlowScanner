@@ -74,7 +74,7 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     Perfroms Nmap scan on the TCP ports.
     """
     command = ['nmap',
-                '--script=auth,malware,vuln,' + os.getenv('nmap_custom_scripts'),
+                '--script=auth',
                 '-sV',
                 str(ip_address),
                 '-p',
@@ -95,7 +95,7 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     Performs Nmap scan on the UDP ports.
     """
     command = ['nmap',
-                '--script=auth,malware,vuln,' + os.getenv('nmap_custom_scripts'),
+                '--script=auth',
                 '-sV',
                 str(ip_address),
                 '-p',
