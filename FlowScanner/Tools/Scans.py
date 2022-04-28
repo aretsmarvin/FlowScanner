@@ -33,12 +33,10 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
     One worker, that performs a scan, per IP and corresponding ports.
     """
-    logging.debug('New scan worker for: '
-                    + ip_address
-                    + " TCP: "
-                    + port_list_tcp
-                    + " UDP: "
-                    + port_list_udp)
+    logging.debug('New scan worker for IP: %s, TCP ports: %s, UDP ports: %s',
+                    str(ip_address),
+                    str(port_list_tcp),
+                    str(port_list_udp))
     if 'None' in port_list_tcp:
         port_list_tcp.remove('None')
     if 'None' in port_list_udp:
@@ -74,11 +72,18 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
         sub.wait()
 
     shutil.rmtree(os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address), ignore_errors=True)
+    logging.debug('End worker for IP: %s, TCP ports: %s, UDP ports: %s',
+                    str(ip_address),
+                    str(port_list_tcp),
+                    str(port_list_udp))
 
 def NmapTCPScan(ip_version, ip_address, port_list):
     """
     Perfroms Nmap scan on the TCP ports.
     """
+    logging.info('Nmap TCP scan IP: %s port(s), %s',
+                str(ip_address),
+                str(port_list))
     command = ['nmap',
                 '--script=auth',
                 '-sV',
@@ -95,11 +100,17 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
         os.system("stty echo")
+    logging.info('End Nmap TCP scan IP: %s port(s), %s',
+                str(ip_address),
+                str(port_list))
 
 def NmapUDPScan(ip_version, ip_address, port_list):
     """
     Performs Nmap scan on the UDP ports.
     """
+    logging.info('Nmap UDP scan IP: %s port(s), %s',
+                str(ip_address),
+                str(port_list))
     command = ['nmap',
                 '--script=auth',
                 '-sV',
@@ -117,3 +128,6 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
         os.system("stty echo")
+    logging.info('End Nmap UDP scan IP: %s port(s), %s',
+                str(ip_address),
+                str(port_list))

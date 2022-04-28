@@ -17,7 +17,15 @@ from FlowScanner.Tools.FlowFilter import FlowFilter
 from FlowScanner.Tools.ScanFilter import ScanFilter
 from FlowScanner.Tools.Scans import PerformScans
 
-logging.basicConfig(filename='FlowScanner.log', encoding='utf-8', level=logging.DEBUG)
+LOGLEVEL = os.getenv('loglevel', 'INFO').upper()
+logging.basicConfig(
+    handlers=[
+        logging.FileHandler("FlowScanner.log"),
+        logging.StreamHandler()
+    ],
+    format='%(asctime)s %(levelname)s:%(message)s',
+    encoding='utf-8',
+    level=LOGLEVEL)
 
 if __name__ == "__main__":
     logging.info('Application startup')
@@ -47,7 +55,10 @@ def OnCreated(event):
     logging.info('Begin scanning.')
     PerformScans(scan_list)
     logging.info('Scanning done.')
-    os.remove(event.src_path)
+    try:
+        os.remove(event.src_path)
+    except OSError as exception:
+        logging.error("Couldn't remove flow file: %s", str(exception))
 
 new_flow_file_handler.on_created = OnCreated
 
@@ -61,5 +72,6 @@ try:
     while True:
         time.sleep(1)
 except KeyboardInterrupt:
+    logging.info("Application exit (keyboard interrupt).")
     flow_file_observer.stop()
     flow_file_observer.join()
