@@ -134,8 +134,8 @@ class FlowFilter:
         Checks if IP already exists. If so, it also checks if the
         port already exsists with that IP address.
         """
-        port_tcp = []
-        port_udp = []
+        port_tcp = None
+        port_udp = None
         if proto == "TCP":
             port_tcp = port
         elif proto == "UDP":
@@ -149,8 +149,8 @@ class FlowFilter:
                 temp_dict = {
                                 "ip_version": ip_version,
                                 "ipaddress": ip_address,
-                                "portlist_tcp": port_tcp,
-                                "portlist_udp": port_udp
+                                "portlist_tcp": [ port_tcp ],
+                                "portlist_udp": [ port_udp ]
                             }
                 self.ip_port_dict.append(temp_dict)
         else:
