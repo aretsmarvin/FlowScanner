@@ -155,8 +155,8 @@ class FlowFilter:
                 self.ip_port_dict.append(temp_dict)
         else:
             if port_tcp:
-                if not str(port_tcp) in searchresult["portlist_tcp"]:
-                    searchresult["portlist_tcp"].append(str(port_tcp))
+                if not port_tcp in searchresult["portlist_tcp"]:
+                    searchresult["portlist_tcp"].append(port_tcp)
             elif port_udp:
-                if not str(port_udp) in searchresult["portlist_udp"]:
-                    searchresult["portlist_udp"].append(str(port_udp))
+                if not port_udp in searchresult["portlist_udp"]:
+                    searchresult["portlist_udp"].append(port_udp)
