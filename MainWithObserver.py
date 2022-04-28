@@ -6,6 +6,7 @@ Main module with file observer for FlowScanner
 
 import os
 import time
+import logging
 
 import dotenv
 from watchdog.events import PatternMatchingEventHandler
@@ -17,7 +18,6 @@ from FlowScanner.Tools.FlowFilter import FlowFilter
 from FlowScanner.Tools.ScanFilter import ScanFilter
 from FlowScanner.Tools.Scans import PerformScans
 
-import logging
 logging.basicConfig(filename='FlowScanner.log', encoding='utf-8', level=logging.DEBUG)
 
 if __name__ == "__main__":
