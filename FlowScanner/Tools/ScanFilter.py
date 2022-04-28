@@ -32,6 +32,8 @@ class ScanFilter:
                                                 ip_ports.get('portlist_udp'),
                                                 "UDP")
                 ip_ports['portlist_udp'] = new_portlist
+            if not ip_ports['portlist_tcp'] and not ip_ports['portlist_udp']:
+                return None
         return ip_ports_list
 
     @staticmethod
