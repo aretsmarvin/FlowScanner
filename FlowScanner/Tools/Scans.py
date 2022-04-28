@@ -41,12 +41,12 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     os.mkdir(os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address))
 
     if port_list_tcp:
-        NmapTCPScan(ip_version, ip_address, ','.join(port_list_tcp))
+        NmapTCPScan(ip_version, ip_address, port_list_tcp)
         for port in port_list_tcp:
             MySQL.InsertOrUpdateIPPort(str(ip_address), int(port), 'TCP')
 
     if port_list_udp:
-        NmapUDPScan(ip_version, ip_address, ','.join(port_list_udp))
+        NmapUDPScan(ip_version, ip_address, port_list_udp)
         for port in port_list_udp:
             MySQL.InsertOrUpdateIPPort(str(ip_address), int(port), 'UDP')
 
