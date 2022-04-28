@@ -3,13 +3,13 @@ Module to perform the scans
 """
 #! /usr/bin/env python
 
+import logging
 import os
 import shutil
 import subprocess
 from multiprocessing.pool import ThreadPool
 
 from FlowScanner.Database import MySQL
-
 
 def PerformScans(server_list) -> None:
     """
@@ -33,6 +33,12 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
     One worker, that performs a scan, per IP and corresponding ports.
     """
+    logging.debug('New scan worker for: '
+                    + ip_address
+                    + " TCP: "
+                    + port_list_tcp
+                    + " UDP: "
+                    + port_list_udp)
     if 'None' in port_list_tcp:
         port_list_tcp.remove('None')
     if 'None' in port_list_udp:

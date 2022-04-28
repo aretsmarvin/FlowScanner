@@ -20,6 +20,7 @@ from FlowScanner.Tools.Scans import PerformScans
 logging.basicConfig(filename='FlowScanner.log', encoding='utf-8', level=logging.DEBUG)
 
 if __name__ == "__main__":
+    logging.info('Application startup')
     patterns = ["*"]
     new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
     nfdump = Nfdump()
@@ -43,7 +44,9 @@ def OnCreated(event):
     flow_list = nfdump.Filter(event.src_path)
     server_list = flow_filter.ServerFilter(flow_list)
     scan_list = scan_filter.ScanTargetFilter(server_list)
+    logging.info('Begin scanning.')
     PerformScans(scan_list)
+    logging.info('Scanning done.')
     os.remove(event.src_path)
 
 new_flow_file_handler.on_created = OnCreated
