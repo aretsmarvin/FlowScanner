@@ -114,8 +114,8 @@ class FlowFilter:
         """
         Function which checks with the NMAP common port file
         if it is a common port, and what is the probability.
-        It returns: 1 when port1 is a server port. -1 when it cannot
-        decide which is the server port. 1 when port2 is a server port.
+        It returns: 1 when port1 is a server port. 0 when it cannot
+        decide which is the server port. -1 when port2 is a server port.
         """
         if not self.ports_dict_filled:
             self.LoadNMAPServices()
