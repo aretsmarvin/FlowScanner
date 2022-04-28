@@ -4,6 +4,7 @@ that have been scanned less than a hour ago.
 """
 #! /usr/bin/env python
 
+import logging
 import os
 from datetime import datetime
 
@@ -33,7 +34,9 @@ class ScanFilter:
                                                 "UDP")
                 ip_ports['portlist_udp'] = new_portlist
             if not ip_ports['portlist_tcp'] and not ip_ports['portlist_udp']:
-                return None
+                logging.debug('TCP and UDP portlist both empty for IP: %s',
+                                ip_ports.get('ipaddress'))
+                ip_ports = None
         return ip_ports_list
 
     @staticmethod
