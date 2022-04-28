@@ -58,8 +58,8 @@ def OnCreated(event):
     logging.info('Scanning done.')
     try:
         os.remove(event.src_path)
-    except OSError as exception:
-        logging.error("Couldn't remove flow file: %s", str(exception))
+    except OSError as remove_exception:
+        logging.error("Couldn't remove flow file: %s", str(remove_exception))
 
 new_flow_file_handler.on_created = OnCreated
 
@@ -73,13 +73,19 @@ try:
     while True:
         time.sleep(1)
 except KeyboardInterrupt:
-    logging.info("Application exit (keyboard interrupt).")
     flow_file_observer.stop()
     flow_file_observer.join()
-    empty_folder = os.getenv('flow_files_folder')
-    for file in os.listdir(empty_folder):
-        os.remove(os.path.join(empty_folder, file))
-    empty_folder = os.getenv('nmap_tmp_output_folder')
-    for file in os.listdir(empty_folder):
-        os.rmdir(os.path.join(empty_folder, file))
+    flow_folder_to_empty = os.getenv('flow_files_folder')
+    for file in os.listdir(flow_folder_to_empty):
+        try:
+            os.remove(os.path.join(flow_folder_to_empty, file))
+        except OSError as exception:
+            logging.error("Couldn't remove flow file: %s", str(exception))
+    nmap_folder_to_empty = os.getenv('nmap_tmp_output_folder')
+    for folder in os.listdir(nmap_folder_to_empty):
+        try:
+            os.rmdir(os.path.join(nmap_folder_to_empty, folder))
+        except OSError as exception:
+            logging.error("Couldn't remove Nmap folder: %s", str(exception))
+    logging.info("Application exit (keyboard interrupt).")
     sys.exit(0)
