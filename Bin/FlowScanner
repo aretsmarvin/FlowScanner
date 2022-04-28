@@ -7,6 +7,7 @@ Main module with file observer for FlowScanner
 import os
 import time
 import logging
+import sys
 import dotenv
 
 from watchdog.events import PatternMatchingEventHandler
@@ -75,3 +76,10 @@ except KeyboardInterrupt:
     logging.info("Application exit (keyboard interrupt).")
     flow_file_observer.stop()
     flow_file_observer.join()
+    empty_folder = os.getenv('flow_files_folder')
+    for file in os.listdir(empty_folder):
+        os.remove(os.path.join(empty_folder, file))
+    empty_folder = os.getenv('nmap_tmp_output_folder')
+    for file in os.listdir(empty_folder):
+        os.remove(os.path.join(empty_folder, file))
+    sys.exit(0)
