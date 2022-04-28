@@ -4,6 +4,7 @@ Module to parse Nfdumpe'd files
 #! /usr/bin/env python
 
 import re
+import logging
 
 import netaddr
 from FlowScanner.Types.Flow import Flow
@@ -20,16 +21,19 @@ class Nfdump:
         Function to filter only UDP and TCP from an nfdump line
         """
         self.flow_list = [ ]
+        logging.debug("Start Nfdump filtering")
         with open(file_location, 'r', encoding="utf-8") as file:
             ##Check if file contains nfdump's header row (if yes, skip first line)
             if not file.readline().startswith('Date'):
                 file.seek(0, 0)
 
             while line := file.readline():
+                logging.debug("Nfdump line: %s", line)
                 data = line.split()
                 proto = data[3]
                 if proto in ('TCP', 'UDP'):
                     self.Parse(data)
+            logging.debug("End Nfdump filtering")
 
             return self.flow_list
 
@@ -37,6 +41,7 @@ class Nfdump:
         """
         Function to parse nfdump
         """
+        logging.debug("Begin parse: %s", data)
         proto = data[3]
         flags = data[7]
         ##IPv4 regex
@@ -58,4 +63,5 @@ class Nfdump:
                     netaddr.IPAddress(ip_dest),
                     int(port_dest),
                     flags)
+        logging.debug("End parse, parsed data: %s", output)
         self.flow_list.append(output)

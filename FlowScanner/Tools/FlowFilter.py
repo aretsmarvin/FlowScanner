@@ -7,6 +7,7 @@ import os
 import sys
 from os import path
 from typing import Dict
+import logging
 
 import netaddr
 import requests
@@ -25,7 +26,7 @@ class FlowFilter:
     def __init__(self):
         self.surf_nets = netaddr.IPSet()
         if not path.exists(os.getenv('known_ip_nets_file')):
-            print("IP address file does not exist at " + os.getenv('known_ip_nets_file'))
+            logging.error("IP address file does not exist at %s", os.getenv('known_ip_nets_file'))
             sys.exit()
         self.LoadIPS(os.getenv('known_ip_nets_file'), os.getenv('ip_block_list_file'))
 
@@ -38,19 +39,23 @@ class FlowFilter:
                 for net in ip_file.read().splitlines():
                     try:
                         self.surf_nets.add(netaddr.IPNetwork(net))
-                    except ValueError:
-                        continue
-        except (IOError, AttributeError, AssertionError):
-            print("Something went wrong...")
+                    except ValueError as valueerror:
+                        logging.warning("Scope file value error: %s", valueerror)
+        except (IOError, AttributeError, AssertionError) as openerror:
+            logging.error("Error while opening scope file: %s, with error: %s",
+                            scope_filename,
+                            openerror)
         try:
             with open(exclude_filename, 'r', encoding="utf-8") as block_file:
                 for line in block_file:
                     try:
                         self.surf_nets.remove(line)
-                    except ValueError:
-                        continue
-        except (IOError, AttributeError, AssertionError):
-            print("Something went wrong...")
+                    except ValueError as valueerror:
+                        logging.warning("Exclude file value error: %s", valueerror)
+        except (IOError, AttributeError, AssertionError) as openerror:
+            logging.error("Error while opening scope file: %s, with error: %s",
+                            exclude_filename,
+                            openerror)
 
     def ServerFilter(self, flowlist: list):
         """
@@ -72,8 +77,9 @@ class FlowFilter:
                     self.AddIPToList(flow.ip_version, flow.ip_source, flow.port_source, flow.proto)
                 case 0:
                     ##More magic (if this event will occur, not sure yet, test with more data)
-                    print("We need more magic!")
-                    print(flow)
+                    logging.warning("This event needs more magic! "
+                                    "Function ServerFilter (in FlowFilter).")
+                    logging.warning("More magic for: %s", flow)
                 case -1:
                     self.AddIPToList(flow.ip_version, flow.ip_dest, flow.port_dest, flow.proto)
         return self.ip_port_dict
@@ -84,7 +90,7 @@ class FlowFilter:
         exists on the disk. If not, it downloads a new one.
         """
         if not path.exists(os.getenv('nmap_services_file_location')):
-            print("Nmap file not found, trying to fetch new one from the internet...")
+            logging.debug("Nmap file not found, trying to fetch new one from the internet...")
             try:
                 url = os.getenv('nmap_web_file_url',
                                 "https://raw.githubusercontent.com/nmap/nmap/master/nmap-services")
@@ -92,7 +98,7 @@ class FlowFilter:
                 with open(os.getenv('nmap_services_file_location'), 'wb') as nmapfile:
                     nmapfile.write(req.content)
             except IOError as exception:
-                print("Cannot download file: " + str(exception))
+                logging.error("Can not download file: %s", exception)
                 sys.exit(1)
 
         try:
@@ -107,8 +113,10 @@ class FlowFilter:
                         continue
                     self.ports.setdefault(proto, {})[port] = freq
                 self.ports_dict_filled = True
-        except (IOError, AttributeError, AssertionError):
-            print("Something went wrong...")
+        except (IOError, AttributeError, AssertionError) as openerror:
+            logging.error("Error while opening Nmap services file: %s, with error: %s",
+                            os.getenv('nmap_services_file_location'),
+                            openerror)
 
     def NmapPortLogic(self, port1: int, port2: int, proto: str) -> int:
         """
