@@ -153,9 +153,9 @@ class FlowFilter:
                                 "portlist_udp": [ ]
                             }
                 if port_tcp is not None:
-                    temp_dict['portlist_tcp'] = port_tcp
+                    temp_dict['portlist_tcp'] = [ port_tcp ]
                 if port_udp is not None:
-                    temp_dict['portlist_udp'] = port_udp
+                    temp_dict['portlist_udp'] = [ port_udp ]
                 self.ip_port_dict.append(temp_dict)
         else:
             if port_tcp:
