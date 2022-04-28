@@ -33,10 +33,12 @@ class ScanFilter:
                                                 ip_ports.get('portlist_udp'),
                                                 "UDP")
                 ip_ports['portlist_udp'] = new_portlist
+        loop_list = ip_ports_list.copy()
+        for ip_ports in loop_list:
             if not ip_ports['portlist_tcp'] and not ip_ports['portlist_udp']:
                 logging.debug('TCP and UDP portlist both empty for IP: %s',
                                 ip_ports.get('ipaddress'))
-                ip_ports = None
+                ip_ports_list.remove(ip_ports)
         return ip_ports_list
 
     @staticmethod
