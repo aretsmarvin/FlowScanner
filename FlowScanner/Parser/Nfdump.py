@@ -46,6 +46,7 @@ class Nfdump:
             ip_source, port_source = data[4].split(':')
             ip_dest, port_dest = data[6].split(':')
         else:
+            ##IPv6 regex
             ip_version = "IPv6"
             ip_source, port_source = data[4].rsplit('.', 1)
             ip_dest, port_dest = data[6].rsplit('.', 1)

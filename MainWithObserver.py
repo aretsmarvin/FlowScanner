@@ -7,17 +7,21 @@ Main module with file observer for FlowScanner
 import os
 import time
 
-from dotenv import load_dotenv
+import dotenv
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 
+from FlowScanner.Database import MySQL
 from FlowScanner.Parser.Nfdump import Nfdump
 from FlowScanner.Tools.FlowFilter import FlowFilter
 from FlowScanner.Tools.ScanFilter import ScanFilter
 from FlowScanner.Tools.Scans import PerformScans
 
+import logging
+logging.basicConfig(filename='FlowScanner.log', encoding='utf-8', level=logging.DEBUG)
+
 if __name__ == "__main__":
-    load_dotenv()
+    dotenv.load_dotenv('.env')
     patterns = ["*"]
     new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
     nfdump = Nfdump()
@@ -50,6 +54,8 @@ flow_file_observer = Observer()
 flow_file_observer.schedule(new_flow_file_handler, PATH, False)
 
 flow_file_observer.start()
+
+print(MySQL.GetLastScanTime("192.168.1.10", 22, "TCP"))
 
 try:
     while True:
