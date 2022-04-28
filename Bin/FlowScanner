@@ -6,6 +6,7 @@ Main module with file observer for FlowScanner
 
 import os
 import time
+import logging
 import dotenv
 
 from watchdog.events import PatternMatchingEventHandler
@@ -15,6 +16,8 @@ from FlowScanner.Parser.Nfdump import Nfdump
 from FlowScanner.Tools.FlowFilter import FlowFilter
 from FlowScanner.Tools.ScanFilter import ScanFilter
 from FlowScanner.Tools.Scans import PerformScans
+
+logging.basicConfig(filename='FlowScanner.log', encoding='utf-8', level=logging.DEBUG)
 
 if __name__ == "__main__":
     patterns = ["*"]
@@ -28,6 +31,7 @@ def OnCreated(event):
     Event handler for when new file is created. Waits untill creation of
     file is completely done.
     """
+    logging.debug('OnCreated event handler called.')
     last_modified = os.path.getmtime(event.src_path)
     while last_modified is not None:
         current = os.path.getmtime(event.src_path)
