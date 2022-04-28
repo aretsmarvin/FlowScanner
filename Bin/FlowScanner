@@ -78,8 +78,8 @@ except KeyboardInterrupt:
     flow_file_observer.join()
     empty_folder = os.getenv('flow_files_folder')
     for file in os.listdir(empty_folder):
-        os.remove(os.path.join(empty_folder, file))
+        os.rmdir(os.path.join(empty_folder, file))
     empty_folder = os.getenv('nmap_tmp_output_folder')
     for file in os.listdir(empty_folder):
-        os.remove(os.path.join(empty_folder, file))
+        os.rmdir(os.path.join(empty_folder, file))
     sys.exit(0)
