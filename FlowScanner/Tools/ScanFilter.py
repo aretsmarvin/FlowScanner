@@ -16,7 +16,7 @@ class ScanFilter:
     IP's and port out of the flow data.
     """
 
-    def ScanTargetFilter(self, ip_ports_list: list):
+    def ScanTargetFilter(self, ip_ports_list: list) -> list:
         """
         Main function to filter the server IP's and corresponding ports
         returns a list of targets which are scanned longer than one
