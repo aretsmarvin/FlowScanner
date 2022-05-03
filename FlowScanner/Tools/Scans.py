@@ -81,7 +81,7 @@ def NmapTCPScan(ip_version, ip_address, port_list):
                 str(ip_address),
                 str(port_list))
     command = ['nmap',
-                '--script=auth',
+                '--script=auth,' + os.getenv('nmap_custom_scripts', ''),
                 '-sV',
                 str(ip_address),
                 '-p',
@@ -108,7 +108,7 @@ def NmapUDPScan(ip_version, ip_address, port_list):
                 str(ip_address),
                 str(port_list))
     command = ['nmap',
-                '--script=auth',
+                '--script=auth,' + os.getenv('nmap_custom_scripts', ''),
                 '-sV',
                 str(ip_address),
                 '-p',
