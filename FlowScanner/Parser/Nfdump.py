@@ -18,7 +18,7 @@ class Nfdump:
 
     def Filter(self, file_location):
         """
-        Function to filter only UDP and TCP from an nfdump line
+        Function to filter only UDP and TCP from an Nfdump line
         """
         self.flow_list = [ ]
         logging.debug("Start Nfdump filtering")
@@ -39,7 +39,7 @@ class Nfdump:
 
     def Parse(self, data):
         """
-        Function to parse nfdump
+        Function to parse Nfdump
         """
         logging.debug("Begin parse: %s", data)
         proto = data[3]
