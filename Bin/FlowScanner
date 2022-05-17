@@ -57,14 +57,13 @@ def OnCreated(event):
     PerformScans(scan_list)
     logging.info('Scanning done.')
     try:
+        if os.getenv('flow_file_move_folder') == "/dev/null":
+            os.remove(event.src_path)
         os.rename(event.src_path, os.getenv('flow_file_move_folder') +
                     '/Netflow_done_' +
                     str(time.time()))
     except OSError as move_exception:
-        if os.getenv('flow_file_move_folder') == "/dev/null":
-            pass
-        else:
-            logging.error("Couldn't (re)move flow file: %s", str(move_exception))
+        logging.error("Couldn't (re)move flow file: %s", str(move_exception))
 
 new_flow_file_handler.on_created = OnCreated
 
