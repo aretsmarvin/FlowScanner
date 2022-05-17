@@ -17,6 +17,7 @@ from FlowScanner.Parser.Nfdump import Nfdump
 from FlowScanner.Tools.FlowFilter import FlowFilter
 from FlowScanner.Tools.ScanFilter import ScanFilter
 from FlowScanner.Tools.Scans import PerformScans
+import FlowScanner
 
 LOGLEVEL = os.getenv('loglevel', 'INFO').upper()
 logging.basicConfig(
@@ -29,7 +30,18 @@ logging.basicConfig(
     level=LOGLEVEL)
 
 if __name__ == "__main__":
-    logging.info('Application startup')
+    logging.info('Application startup...')
+    # pylint: disable=line-too-long logging-not-lazy
+    logging.info("\n" +
+			"███████╗██╗      ██████╗ ██╗    ██╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗\n" +
+			"██╔════╝██║     ██╔═══██╗██║    ██║██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗\n" +
+			"█████╗  ██║     ██║   ██║██║ █╗ ██║███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝\n" +
+			"██╔══╝  ██║     ██║   ██║██║███╗██║╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗\n" +
+			"██║     ███████╗╚██████╔╝╚███╔███╔╝███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║\n" +
+			"╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝\n")
+    logging.info("Flowscanner version: %s", FlowScanner.VERSION)
+    logging.info("Author: Marvin Arets")
+    logging.info("marvin.arets@surf.nl")
     patterns = ["*"]
     new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
     nfdump = Nfdump()
