@@ -14,7 +14,7 @@ class Nfdump:
     """
     Nfdump class
     """
-    flow_list = []
+    flow_list = [Flow]
 
     def Filter(self, file_location):
         """
