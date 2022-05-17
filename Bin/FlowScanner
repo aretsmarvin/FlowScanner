@@ -59,7 +59,8 @@ def OnCreated(event):
     try:
         if os.getenv('flow_file_move_folder') == "/dev/null":
             os.remove(event.src_path)
-        os.rename(event.src_path, os.getenv('flow_file_move_folder') +
+        else:
+            os.rename(event.src_path, os.getenv('flow_file_move_folder') +
                     '/Netflow_done_' +
                     str(time.time()))
     except OSError as move_exception:
