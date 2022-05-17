@@ -61,6 +61,8 @@ def OnCreated(event):
                     '/Netflow_done_' +
                     str(time.time()))
     except OSError as move_exception:
+        if os.getenv('flow_file_move_folder') == "/dev/null":
+            pass
         logging.error("Couldn't (re)move flow file: %s", str(move_exception))
 
 new_flow_file_handler.on_created = OnCreated
