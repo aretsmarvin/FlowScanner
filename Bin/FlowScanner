@@ -62,38 +62,23 @@ def CheckEnvConfig():
     Function to check and verify .env variables.
     """
     configerror = false
-    error_message = "Environment variable missing:"
-    if not "db_host" in os.environ:
-        logging.error(error_message + " db_host")
-        configerror = true
-    if not "db_username" in os.environ:
-        logging.error(error_message + " db_username")
-        configerror = true
-    if not "db_password" in os.environ:
-        logging.error(error_message + " db_password")
-        configerror = true
-    if not "db_database" in os.environ:
-        logging.error(error_message + " db_database")
-        configerror = true
+    error_message = "Environment variable missing: "
 
-    if not "flow_files_folder" in os.environ:
-        logging.error(error_message + " flow_files_folder")
-        configerror = true
-    if not "flow_file_move_folder" in os.environ:
-        logging.error(error_message + " flow_file_move_folder")
-        configerror = true
-    if not "known_ip_nets_file" in os.environ:
-        logging.error(error_message + " known_ip_nets_file")
-        configerror = true
-    if not "ip_block_list_file" in os.environ:
-        logging.error(error_message + " ip_block_list_file")
-        configerror = true
-    if not "nmap_services_file_location" in os.environ:
-        logging.error(error_message + " nmap_services_file_location")
-        configerror = true
-    if not "nmap_tmp_output_folder" in os.environ:
-        logging.error(error_message + " nmap_tmp_output_folder")
-        configerror = true
+    required_variables = ["db_host",
+                        "db_username",
+                        "db_password",
+                        "db_database",
+                        "flow_files_folder",
+                        "flow_file_move_folder",
+                        "known_ip_nets_file",
+                        "ip_block_list_file",
+                        "nmap_services_file_location",
+                        "nmap_tmp_output_folder"]
+
+    for required_variable in required_variables:
+        if not required_variable in os.environ:
+            logging.error(error_message + required_variable)
+            configerror = true
 
     if configerror:
         sys.exit(1)
