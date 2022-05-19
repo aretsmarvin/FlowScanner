@@ -39,7 +39,7 @@ def CheckEnvConfig():
     """
     Function to check and verify .env variables.
     """
-    configerror = false
+    configerror = False
     error_message = "Environment variable missing: "
 
     required_variables = ["db_host",
@@ -56,7 +56,7 @@ def CheckEnvConfig():
     for required_variable in required_variables:
         if not required_variable in os.environ:
             logging.error(error_message + required_variable)
-            configerror = true
+            configerror = True
 
     if configerror:
         sys.exit(1)
