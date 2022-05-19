@@ -20,14 +20,20 @@ from FlowScanner.Tools.Scans import PerformScans
 import FlowScanner
 
 LOGLEVEL = os.getenv('loglevel', 'INFO').upper()
+
+file_handler = logging.FileHandler('FlowScanner.log')
+file_handler.setLevel(LOGLEVEL)
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.INFO)
+
 logging.basicConfig(
-    handlers=[
-        logging.FileHandler("FlowScanner.log"),
-        logging.StreamHandler()
-    ],
     format='%(asctime)s %(levelname)s:%(message)s',
     encoding='utf-8',
-    level=LOGLEVEL)
+    handlers=[
+        file_handler,
+        console_handler
+    ]
+)
 
 if __name__ == "__main__":
     logging.info('Application startup...')
@@ -42,11 +48,55 @@ if __name__ == "__main__":
     logging.info("Flowscanner version: %s", FlowScanner.VERSION)
     logging.info("Author: Marvin Arets")
     logging.info("marvin.arets@surf.nl")
+    logging.info("Checking variables...")
+    CheckEnvConfig()
+    logging.info("Checks done. Application ready.")
     patterns = ["*"]
     new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
     nfdump = Nfdump()
     flow_filter = FlowFilter()
     scan_filter = ScanFilter()
+
+def CheckEnvConfig():
+    """
+    Function to check and verify .env variables.
+    """
+    configerror = false
+    error_message = "Environment variable missing:"
+    if not "db_host" in os.environ:
+        logging.error(error_message + " db_host")
+        configerror = true
+    if not "db_username" in os.environ:
+        logging.error(error_message + " db_username")
+        configerror = true
+    if not "db_password" in os.environ:
+        logging.error(error_message + " db_password")
+        configerror = true
+    if not "db_database" in os.environ:
+        logging.error(error_message + " db_database")
+        configerror = true
+
+    if not "flow_files_folder" in os.environ:
+        logging.error(error_message + " flow_files_folder")
+        configerror = true
+    if not "flow_file_move_folder" in os.environ:
+        logging.error(error_message + " flow_file_move_folder")
+        configerror = true
+    if not "known_ip_nets_file" in os.environ:
+        logging.error(error_message + " known_ip_nets_file")
+        configerror = true
+    if not "ip_block_list_file" in os.environ:
+        logging.error(error_message + " ip_block_list_file")
+        configerror = true
+    if not "nmap_services_file_location" in os.environ:
+        logging.error(error_message + " nmap_services_file_location")
+        configerror = true
+    if not "nmap_tmp_output_folder" in os.environ:
+        logging.error(error_message + " nmap_tmp_output_folder")
+        configerror = true
+
+    if configerror:
+        sys.exit(1)
 
 def OnCreated(event):
     """
