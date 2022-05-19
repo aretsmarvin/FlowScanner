@@ -35,28 +35,6 @@ logging.basicConfig(
     ]
 )
 
-if __name__ == "__main__":
-    logging.info('Application startup...')
-    # pylint: disable=line-too-long logging-not-lazy
-    logging.info("\n" +
-			"███████╗██╗      ██████╗ ██╗    ██╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗\n" +
-			"██╔════╝██║     ██╔═══██╗██║    ██║██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗\n" +
-			"█████╗  ██║     ██║   ██║██║ █╗ ██║███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝\n" +
-			"██╔══╝  ██║     ██║   ██║██║███╗██║╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗\n" +
-			"██║     ███████╗╚██████╔╝╚███╔███╔╝███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║\n" +
-			"╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝\n")
-    logging.info("Flowscanner version: %s", FlowScanner.VERSION)
-    logging.info("Author: Marvin Arets")
-    logging.info("marvin.arets@surf.nl")
-    logging.info("Checking variables...")
-    CheckEnvConfig()
-    logging.info("Checks done. Application ready.")
-    patterns = ["*"]
-    new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
-    nfdump = Nfdump()
-    flow_filter = FlowFilter()
-    scan_filter = ScanFilter()
-
 def CheckEnvConfig():
     """
     Function to check and verify .env variables.
@@ -82,6 +60,28 @@ def CheckEnvConfig():
 
     if configerror:
         sys.exit(1)
+
+if __name__ == "__main__":
+    logging.info('Application startup...')
+    # pylint: disable=line-too-long logging-not-lazy
+    logging.info("\n" +
+			"███████╗██╗      ██████╗ ██╗    ██╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗\n" +
+			"██╔════╝██║     ██╔═══██╗██║    ██║██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗\n" +
+			"█████╗  ██║     ██║   ██║██║ █╗ ██║███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝\n" +
+			"██╔══╝  ██║     ██║   ██║██║███╗██║╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗\n" +
+			"██║     ███████╗╚██████╔╝╚███╔███╔╝███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║\n" +
+			"╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝\n")
+    logging.info("Flowscanner version: %s", FlowScanner.VERSION)
+    logging.info("Author: Marvin Arets")
+    logging.info("marvin.arets@surf.nl")
+    logging.info("Checking variables...")
+    CheckEnvConfig()
+    logging.info("Checks done. Application ready.")
+    patterns = ["*"]
+    new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
+    nfdump = Nfdump()
+    flow_filter = FlowFilter()
+    scan_filter = ScanFilter()
 
 def OnCreated(event):
     """
