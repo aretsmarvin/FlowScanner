@@ -48,11 +48,8 @@ def CheckEnvConfig():
                         "nmap_tmp_output_folder"]
 
     for required_variable in required_variables:
-        if not required_variable in os.environ:
-            logging.error("Environment variable missing: %s", required_variable)
-            configerror = True
-        elif not required_variable:
-            logging.error("Environment variable empty: %s", required_variable)
+        if not os.getenv(required_variable):
+            logging.error("Environment variable missing or empty: %s", required_variable)
             configerror = True
 
     if configerror:
