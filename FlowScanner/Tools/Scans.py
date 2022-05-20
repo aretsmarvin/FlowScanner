@@ -10,7 +10,7 @@ import subprocess
 from multiprocessing.pool import ThreadPool
 
 from FlowScanner.Database import MySQL
-from FlowScanner.Tools.ScanFilter import ScanFilter
+from FlowScanner.Tools import ScanFilter
 
 def PerformScans(server_list) -> None:
     """
@@ -42,10 +42,9 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     os.mkdir(os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address))
 
     port_list_tcp = ScanFilter.PortFilter(ip_address, port_list_tcp, "TCP")
-    if port_list_tcp:
-        NmapTCPScan(ip_version, ip_address, port_list_tcp)
-        for port in port_list_tcp:
-            MySQL.InsertOrUpdateIPPort(str(ip_address), int(port), 'TCP')
+    NmapTCPScan(ip_version, ip_address, port_list_tcp)
+    for port in port_list_tcp:
+        MySQL.InsertOrUpdateIPPort(str(ip_address), int(port), 'TCP')
 
     port_list_udp = ScanFilter.PortFilter(ip_address, port_list_udp, "UDP")
     if port_list_udp:
@@ -75,6 +74,9 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     """
     Perfroms Nmap scan on the TCP ports.
     """
+    if not port_list:
+        logging.warning('Nmap TCP scan called with empty port_list')
+        return
     logging.info('Nmap TCP scan IP: %s port(s): %s',
                 str(ip_address),
                 str(port_list))
@@ -102,6 +104,9 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     """
     Performs Nmap scan on the UDP ports.
     """
+    if not port_list:
+        logging.warning('Nmap UDP scan called with empty port_list')
+        return
     logging.info('Nmap UDP scan IP: %s port(s): %s',
                 str(ip_address),
                 str(port_list))
