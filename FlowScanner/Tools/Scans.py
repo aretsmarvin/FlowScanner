@@ -47,10 +47,9 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
         MySQL.InsertOrUpdateIPPort(str(ip_address), int(port), 'TCP')
 
     port_list_udp = ScanFilter.PortFilter(ip_address, port_list_udp, "UDP")
-    if port_list_udp:
-        NmapUDPScan(ip_version, ip_address, port_list_udp)
-        for port in port_list_udp:
-            MySQL.InsertOrUpdateIPPort(str(ip_address), int(port), 'UDP')
+    NmapUDPScan(ip_version, ip_address, port_list_udp)
+    for port in port_list_udp:
+        MySQL.InsertOrUpdateIPPort(str(ip_address), int(port), 'UDP')
 
     command = ['ivre',
                 'scan2db',
