@@ -90,10 +90,6 @@ def OnCreated(event):
     flow_list = None
     server_list = None
     flow_list = nfdump.Filter(event.src_path)
-    server_list = flow_filter.ServerFilter(flow_list)
-    logging.info('Begin scanning.')
-    PerformScans(server_list)
-    logging.info('Scanning done.')
     try:
         if os.getenv('flow_file_move_folder') == "/dev/null":
             os.remove(event.src_path)
@@ -103,6 +99,10 @@ def OnCreated(event):
                     str(time.time()))
     except OSError as move_exception:
         logging.error("Couldn't (re)move flow file: %s", str(move_exception))
+    server_list = flow_filter.ServerFilter(flow_list)
+    logging.info('Begin scanning.')
+    PerformScans(server_list)
+    logging.info('Scanning done.')
 
 new_flow_file_handler.on_created = OnCreated
 
