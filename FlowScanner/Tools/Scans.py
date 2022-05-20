@@ -55,7 +55,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
                 '-c',
                 'NetFlow',
                 '-r',
-                '--update-view'
+                '--update-view',
                 os.path.join(os.getenv('nmap_tmp_output_folder'), str(ip_address))]
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
