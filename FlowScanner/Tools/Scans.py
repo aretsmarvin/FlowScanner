@@ -74,7 +74,7 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     Perfroms Nmap scan on the TCP ports.
     """
     if not port_list:
-        logging.warning('Nmap TCP scan called with empty port_list')
+        logging.debug('Nmap TCP scan called with empty port_list')
         return
     logging.info('Nmap TCP scan IP: %s port(s): %s',
                 str(ip_address),
@@ -89,7 +89,9 @@ def NmapTCPScan(ip_version, ip_address, port_list):
                 '--host-timeout',
                 '60m',
                 '-oX',
-                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/tcp.xml']
+                os.path.join(os.getenv('nmap_tmp_output_folder'),
+                                        str(ip_address),
+                                        '/tcp.xml')]
     if ip_version == "IPv6":
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
@@ -120,7 +122,9 @@ def NmapUDPScan(ip_version, ip_address, port_list):
                 '60m',
                 '-sU',
                 '-oX',
-                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address) + '/udp.xml']
+                os.path.join(os.getenv('nmap_tmp_output_folder'),
+                                        str(ip_address),
+                                        '/udp.xml')]
     if ip_version == "IPv6":
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
