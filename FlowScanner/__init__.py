@@ -7,6 +7,6 @@ FlowScanner
 from typing import Optional
 
 def _version() -> Optional[str]:
-    return "0.5.4"
+    return "0.5.8"
 
 __version__ = VERSION = _version()
