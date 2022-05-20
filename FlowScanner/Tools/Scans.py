@@ -91,7 +91,7 @@ def NmapTCPScan(ip_version, ip_address, port_list):
                 '-oX',
                 os.path.join(os.getenv('nmap_tmp_output_folder'),
                                         str(ip_address),
-                                        '/tcp.xml')]
+                                        'tcp.xml')]
     if ip_version == "IPv6":
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
@@ -124,7 +124,7 @@ def NmapUDPScan(ip_version, ip_address, port_list):
                 '-oX',
                 os.path.join(os.getenv('nmap_tmp_output_folder'),
                                         str(ip_address),
-                                        '/udp.xml')]
+                                        'udp.xml')]
     if ip_version == "IPv6":
         command.append('-6')
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
