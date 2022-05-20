@@ -55,19 +55,12 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
                 '-c',
                 'NetFlow',
                 '-r',
-                os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address)]
+                '--update-view'
+                os.path.join(os.getenv('nmap_tmp_output_folder'), str(ip_address))]
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
 
-    command = ['ivre',
-                'db2view',
-                'nmap',
-                '--category',
-                'NetFlow']
-    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
-        sub.wait()
-
-    shutil.rmtree(os.getenv('nmap_tmp_output_folder') + '/' + str(ip_address), ignore_errors=True)
+    shutil.rmtree(os.path.join(os.getenv('nmap_tmp_output_folder'), str(ip_address)), ignore_errors=True)
     logging.debug('End worker for IP: %s, TCP ports: %s, UDP ports: %s',
                     str(ip_address),
                     str(port_list_tcp),
