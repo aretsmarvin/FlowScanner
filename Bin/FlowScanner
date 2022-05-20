@@ -15,7 +15,6 @@ from watchdog.observers import Observer
 
 from FlowScanner.Parser.Nfdump import Nfdump
 from FlowScanner.Tools.FlowFilter import FlowFilter
-from FlowScanner.Tools.ScanFilter import ScanFilter
 from FlowScanner.Tools.Scans import PerformScans
 import FlowScanner
 
@@ -75,7 +74,6 @@ if __name__ == "__main__":
     new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
     nfdump = Nfdump()
     flow_filter = FlowFilter()
-    scan_filter = ScanFilter()
 
 def OnCreated(event):
     """
@@ -93,9 +91,8 @@ def OnCreated(event):
     server_list = None
     flow_list = nfdump.Filter(event.src_path)
     server_list = flow_filter.ServerFilter(flow_list)
-    scan_list = scan_filter.ScanTargetFilter(server_list)
     logging.info('Begin scanning.')
-    PerformScans(scan_list)
+    PerformScans(server_list)
     logging.info('Scanning done.')
     try:
         if os.getenv('flow_file_move_folder') == "/dev/null":
