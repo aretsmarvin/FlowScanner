@@ -124,6 +124,7 @@ class FlowFilter:
         if it is a common port, and what is the probability.
         It returns: 1 when port1 is a server port. 0 when it cannot
         decide which is the server port. -1 when port2 is a server port.
+        Function inspired by IVRE, www.ivre.rocks
         """
         if not self.ports_dict_filled:
             self.LoadNMAPServices()
