@@ -106,7 +106,7 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     Performs Nmap scan on the UDP ports.
     """
     if not port_list:
-        logging.warning('Nmap UDP scan called with empty port_list')
+        logging.debug('Nmap UDP scan called with empty port_list')
         return
     logging.info('Nmap UDP scan IP: %s port(s): %s',
                 str(ip_address),
