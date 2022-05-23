@@ -83,17 +83,21 @@ def OnCreated(event):
     logging.debug('OnCreated event handler called.')
     last_modified = os.path.getmtime(event.src_path)
     while last_modified is not None:
+        logging.debug('last_modified ist not None.')
         current = os.path.getmtime(event.src_path)
         time.sleep(1)
         if current == last_modified:
+            logging.debug('current == last modified.')
             last_modified = None
     flow_list = None
     server_list = None
     flow_list = nfdump.Filter(event.src_path)
     try:
         if os.getenv('flow_file_move_folder') == "/dev/null":
+            logging.debug('Remove, because /dev/null.')
             os.remove(event.src_path)
         else:
+            logging.debug('Move file.')
             os.rename(event.src_path, os.getenv('flow_file_move_folder') +
                     '/Netflow_done_' +
                     str(time.time()))
