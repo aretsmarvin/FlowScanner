@@ -81,14 +81,15 @@ def OnCreated(event):
     file is completely done.
     """
     logging.debug('OnCreated event handler called.')
+    file_idle_time = 5
     last_modified = os.path.getmtime(event.src_path)
     while last_modified is not None:
-        logging.debug('last_modified ist not None.')
-        current = os.path.getmtime(event.src_path)
-        time.sleep(1)
-        if current == last_modified:
-            logging.debug('current == last modified.')
+        current = time.time()
+        last_modified = os.path.getmtime(event.src_path)
+        if(current - last_modified) > file_idle_time:
+            logging.debug('(current - last_modified) > file_idle_time')
             last_modified = None
+
     flow_list = None
     server_list = None
     flow_list = nfdump.Filter(event.src_path)
