@@ -25,7 +25,6 @@ def PerformScans(server_list) -> None:
                                     server.get('ipaddress'),
                                     server.get('portlist_tcp'),
                                     server.get('portlist_udp'),))
-                                    ##, timeout=3600
 
     thread_pool.close()
     thread_pool.join()
