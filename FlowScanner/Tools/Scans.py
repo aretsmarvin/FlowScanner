@@ -9,6 +9,9 @@ import shutil
 import subprocess
 from multiprocessing.pool import ThreadPool
 
+from ivre.db import db
+from ivre.view import nmap_record_to_view
+
 from FlowScanner.Database import MySQL
 from FlowScanner.Tools import ScanFilter
 
@@ -29,6 +32,15 @@ def PerformScans(server_list) -> None:
 
     thread_pool.close()
     thread_pool.join()
+
+def IVREInsertView(record):
+    """
+    Callback function to insert values
+    to IVRE view.
+    """
+    db.view.start_store_hosts()
+    db.view.store_or_merge_host(nmap_record_to_view(record))
+    db.view.stop_store_hosts()
 
 def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
@@ -51,15 +63,11 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     for port in port_list_udp:
         MySQL.InsertOrUpdateIPPort(str(ip_address), int(port), 'UDP')
 
-    command = ['ivre',
-                'scan2db',
-                '-c',
-                'NetFlow',
-                '-r',
-                '--update-view',
-                os.path.join(os.getenv('nmap_tmp_output_folder'), str(ip_address))]
-    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
-        sub.wait()
+    db.nmap.store_scan(os.path.join(os.getenv('nmap_tmp_output_folder'),
+                                                str(ip_address)),
+                        categories=["NetFlow"],
+                        source="FlowScanner",
+                        callback=IVREInsertView)
 
     shutil.rmtree(os.path.join(os.getenv('nmap_tmp_output_folder'),
                     str(ip_address)),

@@ -3,3 +3,4 @@ python-dotenv
 watchdog
 netaddr
 mysql-connector-python
+ivre
