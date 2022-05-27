@@ -8,7 +8,6 @@ import os
 import shutil
 import subprocess
 from multiprocessing.pool import ThreadPool
-from ivre.db import db
 
 from FlowScanner.Database import MySQL
 from FlowScanner.Tools import ScanFilter
