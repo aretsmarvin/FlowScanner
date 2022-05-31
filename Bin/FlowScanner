@@ -6,7 +6,7 @@ Main module with file observer for FlowScanner
 
 import os
 import time
-import logger
+import logging
 import sys
 import dotenv
 
