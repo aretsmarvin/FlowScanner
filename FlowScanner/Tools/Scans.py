@@ -32,9 +32,9 @@ def PerformScans(server_list) -> None:
     thread_pool.close()
     thread_pool.join()
 
-def _callback_insert_view(x):
+def CallbackInsertView(record):
     db.view.start_store_hosts()
-    db.view.store_or_merge_host(nmap_record_to_view(x))
+    db.view.store_or_merge_host(nmap_record_to_view(record))
     db.view.stop_store_hosts()
 
 def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
@@ -64,7 +64,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
             db.nmap.store_scan(
                 os.path.join(root, leaffile),
                 categories=["NetFlow"],
-                callback=_callback_insert_view
+                callback=CallbackInsertView
             )
 
     shutil.rmtree(base_directory, ignore_errors=True)
