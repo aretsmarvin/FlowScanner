@@ -6,7 +6,7 @@ Main module with file observer for FlowScanner
 
 import os
 import time
-import logging
+import logger
 import sys
 import dotenv
 
@@ -20,14 +20,13 @@ import FlowScanner
 
 LOGLEVEL = os.getenv('loglevel', 'INFO').upper()
 
-logging.basicConfig(
-    handlers=[
-        logging.FileHandler("FlowScanner.log"),
-        logging.StreamHandler()
-    ],
-    format='%(asctime)s %(levelname)s:%(message)s',
-    encoding='utf-8',
-    level=LOGLEVEL)
+logger = logging.getLogger('FlowScanner')
+log_file_handler = logging.FileHandler('FlowScanner.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s:%(message)s')
+log_file_handler.setFormatter(formatter)
+logger.addHandler(log_file_handler)
+logger.setLevel(LOGLEVEL)
+logger.setEncoding
 
 def CheckEnvConfig():
     """
@@ -48,28 +47,28 @@ def CheckEnvConfig():
 
     for required_variable in required_variables:
         if not os.getenv(required_variable):
-            logging.error("Environment variable missing or empty: %s", required_variable)
+            logger.error("Environment variable missing or empty: %s", required_variable)
             configerror = True
 
     if configerror:
         sys.exit(1)
 
 if __name__ == "__main__":
-    logging.info('Application startup...')
-    # pylint: disable=line-too-long logging-not-lazy
-    logging.info("\n" +
+    logger.info('Application startup...')
+    # pylint: disable=line-too-long logger-not-lazy
+    logger.info("\n" +
 			"███████╗██╗      ██████╗ ██╗    ██╗███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗\n" +
 			"██╔════╝██║     ██╔═══██╗██║    ██║██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗\n" +
 			"█████╗  ██║     ██║   ██║██║ █╗ ██║███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝\n" +
 			"██╔══╝  ██║     ██║   ██║██║███╗██║╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗\n" +
 			"██║     ███████╗╚██████╔╝╚███╔███╔╝███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║\n" +
 			"╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝\n")
-    logging.info("Flowscanner version: %s", FlowScanner.VERSION)
-    logging.info("Author: Marvin Arets")
-    logging.info("marvin.arets@surf.nl")
-    logging.info("Checking variables...")
+    logger.info("Flowscanner version: %s", FlowScanner.VERSION)
+    logger.info("Author: Marvin Arets")
+    logger.info("marvin.arets@surf.nl")
+    logger.info("Checking variables...")
     CheckEnvConfig()
-    logging.info("Checks done. Application ready.")
+    logger.info("Checks done. Application ready.")
     patterns = ["*"]
     new_flow_file_handler = PatternMatchingEventHandler(patterns, None, False, True)
     nfdump = Nfdump()
@@ -80,14 +79,14 @@ def OnCreated(event):
     Event handler for when new file is created. Waits untill creation of
     file is completely done.
     """
-    logging.debug('OnCreated event handler called.')
+    logger.debug('OnCreated event handler called.')
     file_idle_time = 5
     last_modified = os.path.getmtime(event.src_path)
     while last_modified is not None:
         current = time.time()
         last_modified = os.path.getmtime(event.src_path)
         if(current - last_modified) > file_idle_time:
-            logging.debug('(current - last_modified) > file_idle_time')
+            logger.debug('(current - last_modified) > file_idle_time')
             last_modified = None
 
     flow_list = None
@@ -95,19 +94,19 @@ def OnCreated(event):
     flow_list = nfdump.Filter(event.src_path)
     try:
         if os.getenv('flow_file_move_folder') == "/dev/null":
-            logging.debug('Remove, because /dev/null.')
+            logger.debug('Remove, because /dev/null.')
             os.remove(event.src_path)
         else:
-            logging.debug('Move file.')
+            logger.debug('Move file.')
             os.rename(event.src_path, os.getenv('flow_file_move_folder') +
                     '/Netflow_done_' +
                     str(time.time()))
     except OSError as move_exception:
-        logging.error("Couldn't (re)move flow file: %s", str(move_exception))
+        logger.error("Couldn't (re)move flow file: %s", str(move_exception))
     server_list = flow_filter.ServerFilter(flow_list)
-    logging.info('Begin scanning.')
+    logger.info('Begin scanning.')
     PerformScans(server_list)
-    logging.info('Scanning done.')
+    logger.info('Scanning done.')
 
 new_flow_file_handler.on_created = OnCreated
 
@@ -128,12 +127,12 @@ except KeyboardInterrupt:
         try:
             os.remove(os.path.join(flow_folder_to_empty, file))
         except OSError as exception:
-            logging.error("Couldn't remove flow file: %s", str(exception))
+            logger.error("Couldn't remove flow file: %s", str(exception))
     nmap_folder_to_empty = os.getenv('nmap_tmp_output_folder')
     for folder in os.listdir(nmap_folder_to_empty):
         try:
             os.rmdir(os.path.join(nmap_folder_to_empty, folder))
         except OSError as exception:
-            logging.error("Couldn't remove Nmap folder: %s", str(exception))
-    logging.info("Application exit (keyboard interrupt).")
+            logger.error("Couldn't remove Nmap folder: %s", str(exception))
+    logger.info("Application exit (keyboard interrupt).")
     sys.exit(0)

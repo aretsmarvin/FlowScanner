@@ -12,6 +12,7 @@ import logging
 import netaddr
 import requests
 
+logger = logging.getLogger('FlowScanner')
 
 class FlowFilter:
     """
@@ -26,7 +27,7 @@ class FlowFilter:
     def __init__(self):
         self.surf_nets = netaddr.IPSet()
         if not path.exists(os.getenv('known_ip_nets_file')):
-            logging.error("IP address file does not exist at %s", os.getenv('known_ip_nets_file'))
+            logger.error("IP address file does not exist at %s", os.getenv('known_ip_nets_file'))
             sys.exit()
         self.LoadIPS(os.getenv('known_ip_nets_file'), os.getenv('ip_block_list_file'))
 
@@ -40,9 +41,9 @@ class FlowFilter:
                     try:
                         self.surf_nets.add(netaddr.IPNetwork(net))
                     except ValueError as valueerror:
-                        logging.warning("Scope file value error: %s", valueerror)
+                        logger.warning("Scope file value error: %s", valueerror)
         except (IOError, AttributeError, AssertionError) as openerror:
-            logging.error("Error while opening scope file: %s, with error: %s",
+            logger.error("Error while opening scope file: %s, with error: %s",
                             scope_filename,
                             openerror)
         try:
@@ -51,9 +52,9 @@ class FlowFilter:
                     try:
                         self.surf_nets.remove(line)
                     except ValueError as valueerror:
-                        logging.warning("Exclude file value error: %s", valueerror)
+                        logger.warning("Exclude file value error: %s", valueerror)
         except (IOError, AttributeError, AssertionError) as openerror:
-            logging.error("Error while opening scope file: %s, with error: %s",
+            logger.error("Error while opening scope file: %s, with error: %s",
                             exclude_filename,
                             openerror)
 
@@ -77,9 +78,9 @@ class FlowFilter:
                     self.AddIPToList(flow.ip_version, flow.ip_source, flow.port_source, flow.proto)
                 case 0:
                     ##More magic (if this event will occur, not sure yet, test with more data)
-                    logging.warning("This event needs more magic! "
+                    logger.warning("This event needs more magic! "
                                     "Function ServerFilter (in FlowFilter).")
-                    logging.warning("More magic for: %s", flow)
+                    logger.warning("More magic for: %s", flow)
                 case -1:
                     self.AddIPToList(flow.ip_version, flow.ip_dest, flow.port_dest, flow.proto)
         return self.ip_port_dict
@@ -90,7 +91,7 @@ class FlowFilter:
         exists on the disk. If not, it downloads a new one.
         """
         if not path.exists(os.getenv('nmap_services_file_location')):
-            logging.debug("Nmap file not found, trying to fetch new one from the internet...")
+            logger.debug("Nmap file not found, trying to fetch new one from the internet...")
             try:
                 url = os.getenv('nmap_web_file_url',
                                 "https://raw.githubusercontent.com/nmap/nmap/master/nmap-services")
@@ -98,7 +99,7 @@ class FlowFilter:
                 with open(os.getenv('nmap_services_file_location'), 'wb') as nmapfile:
                     nmapfile.write(req.content)
             except IOError as exception:
-                logging.error("Can not download file: %s", exception)
+                logger.error("Can not download file: %s", exception)
                 sys.exit(1)
 
         try:
@@ -114,7 +115,7 @@ class FlowFilter:
                     self.ports.setdefault(proto, {})[port] = freq
                 self.ports_dict_filled = True
         except (IOError, AttributeError, AssertionError) as openerror:
-            logging.error("Error while opening Nmap services file: %s, with error: %s",
+            logger.error("Error while opening Nmap services file: %s, with error: %s",
                             os.getenv('nmap_services_file_location'),
                             openerror)
 

@@ -15,6 +15,8 @@ from ivre.view import nmap_record_to_view
 from FlowScanner.Database import MySQL
 from FlowScanner.Tools import ScanFilter
 
+logger = logging.getLogger('FlowScanner')
+
 def PerformScans(server_list) -> None:
     """
     Starts scan workers, based on the provided server list.
@@ -33,6 +35,9 @@ def PerformScans(server_list) -> None:
     thread_pool.join()
 
 def CallbackInsertView(record):
+    """
+    Callback handler for IVRE
+    """
     db.view.start_store_hosts()
     db.view.store_or_merge_host(nmap_record_to_view(record))
     db.view.stop_store_hosts()
@@ -41,7 +46,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
     """
     One worker, that performs a scan, per IP and corresponding ports.
     """
-    logging.debug('New scan worker for IP: %s, TCP ports: %s, UDP ports: %s',
+    logger.debug('New scan worker for IP: %s, TCP ports: %s, UDP ports: %s',
                     str(ip_address),
                     str(port_list_tcp),
                     str(port_list_udp))
@@ -68,7 +73,7 @@ def ScanWorker(ip_version, ip_address, port_list_tcp, port_list_udp):
             )
 
     shutil.rmtree(base_directory, ignore_errors=True)
-    logging.debug('End worker for IP: %s, TCP ports: %s, UDP ports: %s',
+    logger.debug('End worker for IP: %s, TCP ports: %s, UDP ports: %s',
                     str(ip_address),
                     str(port_list_tcp),
                     str(port_list_udp))
@@ -78,9 +83,9 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     Perfroms Nmap scan on the TCP ports.
     """
     if not port_list:
-        logging.debug('Nmap TCP scan called with empty port_list')
+        logger.debug('Nmap TCP scan called with empty port_list')
         return
-    logging.info('Nmap TCP scan IP: %s port(s): %s',
+    logger.info('Nmap TCP scan IP: %s port(s): %s',
                 str(ip_address),
                 str(port_list))
     command = ['nmap',
@@ -101,7 +106,7 @@ def NmapTCPScan(ip_version, ip_address, port_list):
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
         os.system("stty echo")
-    logging.info('End Nmap TCP scan IP: %s port(s): %s',
+    logger.info('End Nmap TCP scan IP: %s port(s): %s',
                 str(ip_address),
                 str(port_list))
 
@@ -110,9 +115,9 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     Performs Nmap scan on the UDP ports.
     """
     if not port_list:
-        logging.debug('Nmap UDP scan called with empty port_list')
+        logger.debug('Nmap UDP scan called with empty port_list')
         return
-    logging.info('Nmap UDP scan IP: %s port(s): %s',
+    logger.info('Nmap UDP scan IP: %s port(s): %s',
                 str(ip_address),
                 str(port_list))
     command = ['nmap',
@@ -134,6 +139,6 @@ def NmapUDPScan(ip_version, ip_address, port_list):
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as sub:
         sub.wait()
         os.system("stty echo")
-    logging.info('End Nmap UDP scan IP: %s port(s): %s',
+    logger.info('End Nmap UDP scan IP: %s port(s): %s',
                 str(ip_address),
                 str(port_list))
